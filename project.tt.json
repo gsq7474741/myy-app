@@ -1,0 +1,13 @@
+{
+  "miniprogramRoot": "./",
+  "projectname": "myy",
+  "description": "",
+  "appid": "wx853bb662a9bbf9d3",
+  "setting": {
+    "urlCheck": true,
+    "es6": false,
+    "postcss": false,
+    "minified": false
+  },
+  "compileType": "miniprogram"
+}

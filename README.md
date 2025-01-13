@@ -2,7 +2,8 @@
 ## 技术栈
 
 - typescript (编程语言)
-- node.js (运行环境)
+- Taro, Vue, Pinia, UnoCss (开发框架)
+- wechat miniprogram (运行环境)
 - Hono (服务器框架)
 - typeorm (数据库ORM框架)
 
@@ -18,11 +19,7 @@
 
 ```
 npm install
-npm run dev
-```
-
-```
-open http://localhost:3090
+npm run dev:weapp
 ```
 
 开发环境的`.env.dev`文件请联系管理员获取。
