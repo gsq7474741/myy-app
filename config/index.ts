@@ -25,7 +25,7 @@ export default defineConfig<"webpack5">(async (merge, { command, mode }) => {
         return 375;
       }
       // 全局使用 Taro 默认的 750 尺寸
-      return 750;
+      return 375;
     },
     deviceRatio: {
       640: 2.34 / 2,
@@ -35,8 +35,20 @@ export default defineConfig<"webpack5">(async (merge, { command, mode }) => {
     },
     sourceRoot: "src",
     outputRoot: "dist",
+    // sass: {
+    //   resource: [path.resolve(__dirname, "..", "src/assets/nutui.scss")],
+    //   // 默认京东 APP 10.0主题 > @import "@nutui/nutui-taro/dist/styles/variables.scss";
+    //   // 京东科技主题 > @import "@nutui/nutui-taro/dist/styles/variables-jdt.scss";
+    //   // 京东B商城主题 > @import "@nutui/nutui-taro/dist/styles/variables-jdb.scss";
+    //   // 京东企业业务主题 > @import "@nutui/nutui-taro/dist/styles/variables-jddkh.scss";
+    //   data: `@import "@nutui/nutui-taro/dist/styles/variables.scss";`,
+    // },
+    // sass: {
+    //   resource: [path.resolve(__dirname, "..", "src/assets/taroui.scss")],
+    //   data: `@import "taro-ui/dist/style/index.scss";`,
+    // },
     plugins: [
-      "@tarojs/plugin-html",
+      // "@tarojs/plugin-html",
       [
         "@tarojs/plugin-framework-vue3",
         {
@@ -130,9 +142,26 @@ export default defineConfig<"webpack5">(async (merge, { command, mode }) => {
             generateScopedName: "[name]__[local]___[hash:base64:5]",
           },
         },
+        pxtransform: {
+          config: {
+            minRootSize: 16,
+            onePxTransform: false,
+          },
+        },
+      },
+      devServer: {
+        client: { overlay: false },
       },
       webpackChain(chain) {
-        // chain.plugin("unocss").use(UnoCSS);
+        chain.plugin("unocss").use(UnoCSS);
+        chain.plugin("auto-components").use(
+          AutoComponents({
+            dirs: ["src/components"],
+            directoryAsNamespace: true,
+            dts: "./types/vue-components.d.ts",
+            // resolvers: [NutUIResolver({ taro: true })],
+          })
+        );
         chain.resolve.plugin("tsconfig-paths").use(TsconfigPathsPlugin);
       },
     },
@@ -147,6 +176,7 @@ export default defineConfig<"webpack5">(async (merge, { command, mode }) => {
     alias: {
       "@/components": path.resolve(__dirname, "..", "src/components"),
       "@/assets": path.resolve(__dirname, "..", "src/assets"),
+      "@/utils": path.resolve(__dirname, "..", "src/utils"),
     },
   };
   if (process.env.NODE_ENV === "development") {

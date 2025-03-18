@@ -1,5 +1,10 @@
 <template>
-  <AtNavBar @clickLeftIcon="onClickBack" color="#000" title="导航" />
+  <AtNavBar
+    v-show="false"
+    @clickLeftIcon="onClickBack"
+    color="#000"
+    title="导航"
+  />
 </template>
 
 <script setup lang="ts">
