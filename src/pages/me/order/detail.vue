@@ -13,18 +13,18 @@
             orderStatus.label
           }}</view>
         </view>
-        <view
-          class="pt-2 pb-1 [&>view]:px-4 [&>view]:py-2 [&>view+view]:border-t [&>view+view]:border-solid [&>view+view]:border-gray-100"
-        >
-          <view>服务产品：{{ treeInfo.name }}</view>
-          <view>服务类型：{{ orderDetail.type }}</view>
-          <view>联系称呼：{{ orderDetail.name }}</view>
-          <view>联系电话：{{ orderDetail.phone }}</view>
-          <view v-if="orderDetail.remark">备注：{{ orderDetail.remark }}</view>
-          <view
+        <view class="pt-2 pb-1">
+          <view class="line px-4 py-2">服务产品：{{ treeInfo.name }}</view>
+          <view class="line px-4 py-2">服务类型：{{ orderDetail.type }}</view>
+          <view class="line px-4 py-2">联系称呼：{{ orderDetail.name }}</view>
+          <view class="line px-4 py-2">联系电话：{{ orderDetail.phone }}</view>
+          <view v-if="orderDetail.remark" class="line px-4 py-2"
+            >备注：{{ orderDetail.remark }}</view
+          >
+          <view class="line px-4 py-2"
             >下单时间：{{ timestampToDateString(orderDetail.createTime) }}</view
           >
-          <view
+          <view class="line px-4 py-2"
             >更新时间：{{ timestampToDateString(orderDetail.updateTime) }}</view
           >
         </view>
@@ -59,3 +59,10 @@ onMounted(() => {
   refresh();
 });
 </script>
+
+<style scoped>
+.line + .line {
+  border-top-width: 1px;
+  border-top: 1px solid rgb(243 244 246);
+}
+</style>
