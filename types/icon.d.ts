@@ -2,5 +2,4 @@
 type IconifyIcons =
   | "i-lets-icons-order"
   | "i-lets-icons-credit-card"
-  | "i-myy1-empty"
   | "i-myy-empty";

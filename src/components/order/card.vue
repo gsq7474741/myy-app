@@ -17,7 +17,7 @@
       <image
         :src="TestImg"
         mode="aspectFit"
-        class="rounded size-160 bg-gray-100/70"
+        class="rounded size-20 bg-gray-100/70"
       />
       <view class="flex-1 flex flex-col">
         <text class="font-semibold text-base mb-1">{{ data.type }}</text>

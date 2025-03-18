@@ -1,7 +1,9 @@
 export default {
   pages: [
     "pages/index/index",
-    "pages/courtyard/index",
+    "pages/chat/index",
+    "pages/courtyard/index-v2",
+    "pages/courtyard/maintenance",
     "pages/me/index",
     "pages/me/order/list",
     "pages/me/order/detail",
@@ -10,11 +12,12 @@ export default {
   entryPagePath: "pages/me/index",
   window: {
     backgroundTextStyle: "light",
-    navigationBarBackgroundColor: "#fff",
+    navigationBarBackgroundColor: "#7CCF7F",
     navigationBarTitleText: "WeChat",
-    navigationBarTextStyle: "black",
-    navigationStyle: "default", // custom: 保留右上角胶囊
+    navigationBarTextStyle: "white",
+    navigationStyle: "custom", // custom: 保留右上角胶囊
   },
+
   tabBar: {
     custom: false,
     color: "#2c2c2c",
@@ -28,7 +31,7 @@ export default {
       //   iconPath: "assets/icon/icon-home.png",
       // },
       {
-        pagePath: "pages/courtyard/index",
+        pagePath: "pages/courtyard/index-v2",
         text: "庭院",
         selectedIconPath: "assets/icon/icon-garden-active.png",
         iconPath: "assets/icon/icon-garden.png",
