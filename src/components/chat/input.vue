@@ -1,6 +1,11 @@
 <template>
   <view
-    class="bg-[#F3F4F6] border border-[#EAEDF2] border-solid rounded-3xl w-full min-h-[1em] p-2.5"
+    :class="
+      cn(
+        'bg-[#F3F4F6] border border-[#EAEDF2] border-solid rounded-3xl w-full min-h-[1em] p-2.5 flex flex-col',
+        props.class
+      )
+    "
   >
     <textarea
       v-model="inputValue"
@@ -28,7 +33,9 @@
 </template>
 
 <script setup lang="ts">
-// const props=defineProps<{}>()
+import { ClassValue } from "clsx";
+
+const props = defineProps<{ class?: ClassValue }>();
 
 const chatStore = useChatStore();
 const inputValue = ref("");
