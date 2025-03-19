@@ -11,8 +11,15 @@
             mode="aspectFit"
           ></image>
         </view>
-        <view class="bg-transparent rounded-2xl w-fit">
-          <text>{{ item.content }}</text>
+        <view>
+          <view class="bg-transparent rounded-2xl w-fit">
+            <text>{{ item.content }}</text>
+          </view>
+          <view v-if="item.loading" class="flex items-center min-h-9">
+            <view
+              class="size-4 i-myy-load animate-spin animate-duration-500"
+            ></view>
+          </view>
         </view>
       </view>
     </view>

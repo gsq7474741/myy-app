@@ -41,7 +41,9 @@ const chatStore = useChatStore();
 const inputValue = ref("");
 const focus = ref(false);
 
-const sendable = computed(() => inputValue.value.trim() !== "");
+const sendable = computed(
+  () => inputValue.value.trim() !== "" && chatStore.sendable
+);
 
 const handleSend = () => {
   if (!sendable.value) return;
