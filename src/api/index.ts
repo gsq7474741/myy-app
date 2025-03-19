@@ -29,6 +29,7 @@ export class DifySseH5 {
     };
     fetchEventSource(getDifyUrl(), {
       ...fetchOptions,
+      openWhenHidden: false,
       onmessage: (e) => {
         try {
           if (e.data && e.event !== "ping") {

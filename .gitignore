@@ -15,7 +15,7 @@ node_modules/
 .DS_Store
 .swc
 
-./types/auto-imports.d.ts
-./types/vue-components.d.ts
+types/auto-imports.d.ts
+types/vue-components.d.ts
 
 .env.local
