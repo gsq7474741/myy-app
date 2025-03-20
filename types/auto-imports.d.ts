@@ -6,6 +6,7 @@
 export {}
 declare global {
   const AiMessageSender: typeof import('../src/stores/chat')['AiMessageSender']
+  const DifySseH5: typeof import('../src/api/index')['DifySseH5']
   const EffectScope: typeof import('vue')['EffectScope']
   const ORDER_STATUS_INFO: typeof import('../src/utils/constants')['ORDER_STATUS_INFO']
   const cn: typeof import('../src/utils/index')['cn']
@@ -150,12 +151,16 @@ declare global {
   // @ts-ignore
   export type { AiMessageSender } from '../src/stores/chat'
   import('../src/stores/chat')
+  // @ts-ignore
+  export type { DifySseH5 } from '../src/api/index'
+  import('../src/api/index')
 }
 // for vue template auto import
 import { UnwrapRef } from 'vue'
 declare module 'vue' {
   interface ComponentCustomProperties {
     readonly AiMessageSender: UnwrapRef<typeof import('../src/stores/chat')['AiMessageSender']>
+    readonly DifySseH5: UnwrapRef<typeof import('../src/api/index')['DifySseH5']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly ORDER_STATUS_INFO: UnwrapRef<typeof import('../src/utils/constants')['ORDER_STATUS_INFO']>
     readonly cn: UnwrapRef<typeof import('../src/utils/index')['cn']>
