@@ -1,3 +1,23 @@
-$hd:1;
+$hd: 1;
 
-// @use "~taro-ui/dist/style/index.scss";
+.main-content {
+  background: linear-gradient(180deg, #7bcf7e 0%, #edf1ed 30.39%);
+}
+
+.btn:after {
+  border: unset;
+}
+
+taro-button-core.btn:not([disabled]):active {
+  color: inherit;
+  background-color: inherit;
+}
+
+.btn-green {
+  background-color: #a7dca9;
+  color: white;
+  &:active {
+    background-color: #97dca9;
+    color: white;
+  }
+}

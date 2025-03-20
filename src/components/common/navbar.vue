@@ -8,7 +8,8 @@
           : [
               withAutoBackground && 'bg-white',
               withAutoShadow && 'navbar-scrolled',
-            ]
+            ],
+        props.class
       )
     "
   >
@@ -24,9 +25,9 @@
         <view
           v-if="showBack && canBack"
           class="size-[24px] i-myy-back"
-          @click="navigateBack({ delta: 1 })"
+          @click="onClickBack"
         ></view>
-        <text :class="cn('font-bold')">木易养</text>
+        <text :class="cn('font-bold')">{{ title || "木易养" }}</text>
       </view>
       <view></view>
     </view>
@@ -35,12 +36,16 @@
 
 <script setup lang="ts">
 import { usePageScroll, getCurrentPages, navigateBack } from "@tarojs/taro";
+import { ClassValue } from "clsx";
 
-defineProps<{
+const props = defineProps<{
   withAutoShadow?: boolean;
   withAutoBackground?: boolean;
   withAutoForeground?: boolean;
   showBack?: boolean;
+  title?: string;
+  back?: () => void;
+  class?: ClassValue;
 }>();
 
 const canBack = ref(false);
@@ -51,11 +56,23 @@ usePageScroll((res) => {
 });
 
 const checkCanBack = () => {
+  if (props.back) {
+    canBack.value = true;
+    return;
+  }
   const pages = getCurrentPages();
   if (pages.length > 1) {
     canBack.value = true;
   } else {
     canBack.value = false;
+  }
+};
+
+const onClickBack = () => {
+  if (props.back) {
+    props.back();
+  } else {
+    navigateBack({ delta: 1 });
   }
 };
 
