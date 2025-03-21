@@ -48,18 +48,43 @@ resources:
               authorizationV4: true,
             });
             
+            // Function to check if a file exists
+            const fileExists = (filePath) => {
+              try {
+                return fs.statSync(filePath).isFile();
+              } catch (err) {
+                return false;
+              }
+            };
+            
             // Function to recursively get all files in a directory
             const getAllFiles = (dirPath, arrayOfFiles = []) => {
-              const files = fs.readdirSync(dirPath);
-              
-              files.forEach(file => {
-                const filePath = path.join(dirPath, file);
-                if (fs.statSync(filePath).isDirectory()) {
-                  arrayOfFiles = getAllFiles(filePath, arrayOfFiles);
-                } else {
-                  arrayOfFiles.push(filePath);
+              try {
+                // Check if directory exists
+                if (!fs.existsSync(dirPath)) {
+                  console.error(`Directory not found: ${dirPath}`);
+                  return arrayOfFiles;
                 }
-              });
+                
+                const files = fs.readdirSync(dirPath);
+                
+                files.forEach(file => {
+                  try {
+                    const filePath = path.resolve(dirPath, file);
+                    const stat = fs.statSync(filePath);
+                    
+                    if (stat.isDirectory()) {
+                      arrayOfFiles = getAllFiles(filePath, arrayOfFiles);
+                    } else if (stat.isFile()) {
+                      arrayOfFiles.push(filePath);
+                    }
+                  } catch (err) {
+                    console.error(`Error processing file ${file}: ${err.message}`);
+                  }
+                });
+              } catch (err) {
+                console.error(`Error reading directory ${dirPath}: ${err.message}`);
+              }
               
               return arrayOfFiles;
             };
@@ -67,26 +92,50 @@ resources:
             // Upload all files from dist directory
             const uploadFiles = async () => {
               try {
-                const sourceDir = './dist';
+                // Use absolute path to ensure correct file resolution
+                const sourceDir = path.resolve('./dist');
+                console.log(`Looking for files in: ${sourceDir}`);
+                
+                if (!fs.existsSync(sourceDir)) {
+                  console.error(`Source directory not found: ${sourceDir}`);
+                  process.exit(1);
+                }
+                
                 const allFiles = getAllFiles(sourceDir);
+                console.log(`Found ${allFiles.length} files to upload`);
+                
+                if (allFiles.length === 0) {
+                  console.error('No files found to upload');
+                  process.exit(1);
+                }
                 
                 for (const filePath of allFiles) {
-                  // Calculate relative path for OSS
-                  const relativePath = path.relative(sourceDir, filePath);
-                  // Combine with OSS path
-                  const ossKey = path.posix.join(ossPath, relativePath.split(path.sep).join(path.posix.sep));
-                  
-                  console.log(`Uploading ${filePath} to oss://${bucketName}/${ossKey}`);
-                  
-                  // Upload file to OSS using file stream
-                  const fileStream = fs.createReadStream(filePath);
-                  const result = await client.put(ossKey, fileStream);
-                  console.log(`Uploaded successfully: ${result.url}`);
+                  try {
+                    // Verify file exists before attempting to upload
+                    if (!fileExists(filePath)) {
+                      console.error(`File not found: ${filePath}`);
+                      continue;
+                    }
+                    
+                    // Calculate relative path for OSS
+                    const relativePath = path.relative(sourceDir, filePath);
+                    // Combine with OSS path
+                    const ossKey = path.posix.join(ossPath || '', relativePath.split(path.sep).join(path.posix.sep));
+                    
+                    console.log(`Uploading ${filePath} to oss://${bucketName}/${ossKey}`);
+                    
+                    // Upload file to OSS using file stream
+                    const fileStream = fs.createReadStream(filePath);
+                    const result = await client.put(ossKey, fileStream);
+                    console.log(`Uploaded successfully: ${result.url}`);
+                  } catch (err) {
+                    console.error(`Error uploading file ${filePath}: ${err.message}`);
+                  }
                 }
                 
                 console.log('All files uploaded successfully!');
               } catch (error) {
-                console.error('Error uploading files:', error);
+                console.error(`Error uploading files: ${error.message}`);
                 process.exit(1);
               }
             };
