@@ -1,0 +1,119 @@
+
+const OSS = require('ali-oss');
+const fs = require('fs');
+const path = require('path');
+
+// OSS configuration
+const accessKeyId = process.env.ALIBABA_CLOUD_ACCESS_KEY_ID;
+const accessKeySecret = process.env.ALIBABA_CLOUD_ACCESS_KEY_SECRET;
+const bucketName = process.env.OSS_BUCKET;
+const region = process.env.OSS_REGION;
+const ossPath = process.env.OSS_PATH;
+
+if (!accessKeyId || !accessKeySecret) {
+  console.error('Missing Alibaba Cloud credentials. Please set ALIBABA_CLOUD_ACCESS_KEY_ID and ALIBABA_CLOUD_ACCESS_KEY_SECRET environment variables.');
+  process.exit(1);
+}
+
+// Initialize OSS client
+const client = new OSS({
+  region: region,
+  accessKeyId: accessKeyId,
+  accessKeySecret: accessKeySecret,
+  bucket: bucketName,
+  authorizationV4: true,
+});
+
+// Function to check if a file exists
+const fileExists = (filePath) => {
+  try {
+    return fs.statSync(filePath).isFile();
+  } catch (err) {
+    return false;
+  }
+};
+
+// Function to recursively get all files in a directory
+const getAllFiles = (dirPath, arrayOfFiles = []) => {
+  try {
+    // Check if directory exists
+    if (!fs.existsSync(dirPath)) {
+      console.error(`Directory not found: ${dirPath}`);
+      return arrayOfFiles;
+    }
+    
+    const files = fs.readdirSync(dirPath);
+    
+    files.forEach(file => {
+      try {
+        const filePath = path.resolve(dirPath, file);
+        const stat = fs.statSync(filePath);
+        
+        if (stat.isDirectory()) {
+          arrayOfFiles = getAllFiles(filePath, arrayOfFiles);
+        } else if (stat.isFile()) {
+          arrayOfFiles.push(filePath);
+        }
+      } catch (err) {
+        console.error(`Error processing file ${file}: ${err.message}`);
+      }
+    });
+  } catch (err) {
+    console.error(`Error reading directory ${dirPath}: ${err.message}`);
+  }
+  
+  return arrayOfFiles;
+};
+
+// Upload all files from dist directory
+const uploadFiles = async () => {
+  try {
+    // Use absolute path to ensure correct file resolution
+    const sourceDir = path.resolve('./dist');
+    console.log(`Looking for files in: ${sourceDir}`);
+    
+    if (!fs.existsSync(sourceDir)) {
+      console.error(`Source directory not found: ${sourceDir}`);
+      process.exit(1);
+    }
+    
+    const allFiles = getAllFiles(sourceDir);
+    console.log(`Found ${allFiles.length} files to upload`);
+    
+    if (allFiles.length === 0) {
+      console.error('No files found to upload');
+      process.exit(1);
+    }
+    
+    for (const filePath of allFiles) {
+      try {
+        // Verify file exists before attempting to upload
+        if (!fileExists(filePath)) {
+          console.error(`File not found: ${filePath}`);
+          continue;
+        }
+        
+        // Calculate relative path for OSS
+        const relativePath = path.relative(sourceDir, filePath);
+        // Combine with OSS path
+        const ossKey = path.posix.join(ossPath || '', relativePath.split(path.sep).join(path.posix.sep));
+        
+        console.log(`Uploading ${filePath} to oss://${bucketName}/${ossKey}`);
+        
+        // Upload file to OSS using file stream
+        const fileStream = fs.createReadStream(filePath);
+        const result = await client.put(ossKey, fileStream);
+        console.log(`Uploaded successfully: ${result.url}`);
+      } catch (err) {
+        console.error(`Error uploading file ${filePath}: ${err.message}`);
+      }
+    }
+    
+    console.log('All files uploaded successfully!');
+  } catch (error) {
+    console.error(`Error uploading files: ${error.message}`);
+    process.exit(1);
+  }
+};
+
+uploadFiles();
