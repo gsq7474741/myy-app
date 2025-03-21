@@ -8,50 +8,33 @@ vars:
   ossRegion: ${env(OSS_REGION, 'oss-cn-hongkong')}
   ossPath: ${env(OSS_PATH, 'myy-app')}
 resources:
-  h5-build-deploy:
-    component: custom
+  myy-app:
+    component: fc3
     actions:
       pre-deploy:
         # Install dependencies and build h5 version
-        - run: export PATH=/usr/local/versions/node/v22.14.0/bin:$PATH && npm install
+        - run: export PATH=/usr/local/versions/node/v20.8.1/bin:$PATH && npm install --legacy-peer-deps
           path: ./
-        - run: export PATH=/usr/local/versions/node/v22.14.0/bin:$PATH && npm run build:h5
+        - run: export PATH=/usr/local/versions/node/v20.8.1/bin:$PATH && npm run build:h5
           path: ./
-        # Install Alibaba Cloud CLI tools for OSS upload
-        - run: pip install oss2 -U
+        # Install ali-oss dependency for Node.js OSS upload
+        - run: export PATH=/usr/local/versions/node/v20.8.1/bin:$PATH && npm install ali-oss --no-save --legacy-peer-deps
           path: ./
-        # Upload to OSS using Python script
-        - run: |
-            python -c "
-            import os
-            import oss2
-            
-            # OSS configuration
-            access_key_id = os.environ.get('ALIBABA_CLOUD_ACCESS_KEY_ID')
-            access_key_secret = os.environ.get('ALIBABA_CLOUD_ACCESS_KEY_SECRET')
-            bucket_name = '${vars.ossBucket}'
-            endpoint = '${vars.ossRegion}.aliyuncs.com'
-            oss_path = '${vars.ossPath}'
-            
-            if not access_key_id or not access_key_secret:
-                raise Exception('Missing Alibaba Cloud credentials. Please set ALIBABA_CLOUD_ACCESS_KEY_ID and ALIBABA_CLOUD_ACCESS_KEY_SECRET environment variables.')
-            
-            # Initialize OSS client
-            auth = oss2.Auth(access_key_id, access_key_secret)
-            bucket = oss2.Bucket(auth, endpoint, bucket_name)
-            
-            # Upload all files from dist/h5 directory
-            for root, dirs, files in os.walk('./dist/h5'):
-                for file in files:
-                    local_path = os.path.join(root, file)
-                    # Calculate relative path for OSS
-                    relative_path = os.path.relpath(local_path, './dist/h5')
-                    # Combine with OSS path
-                    oss_key = os.path.join(oss_path, relative_path).replace('\\', '/')
-                    
-                    print(f'Uploading {local_path} to oss://{bucket_name}/{oss_key}')
-                    bucket.put_object_from_file(oss_key, local_path)
-                    
-            print('Upload completed successfully!')
-            "
+        # Upload to OSS using Node.js script
+        - run: export PATH=/usr/local/versions/node/v20.8.1/bin:$PATH && node upload.js
           path: ./
+props:
+      serviceName: 'my-service'
+      domainName: 'foliumatrix.com'  
+      region: ${vars.region}
+      functionName: ${vars.functionName}
+      runtime: 'custom.debian10'
+      description: 'build and upload frontend'
+      timeout: 60
+      memorySize: 512
+      environmentVariables:
+        PATH: >-
+          /var/fc/lang/nodejs20/bin:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/bin
+        NODE_PATH: /opt/nodejs/node_modules
+      cpu: 0.5
+      diskSize: 512
