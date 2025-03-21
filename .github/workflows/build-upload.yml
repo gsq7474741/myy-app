@@ -23,7 +23,6 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm install --legacy-peer-deps
     - run: npm run build:h5
     - run: npm install ali-oss --no-save --legacy-peer-deps
     - run: npm run build:h5
