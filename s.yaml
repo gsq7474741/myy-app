@@ -8,7 +8,7 @@ vars:
   ossRegion: ${env(OSS_REGION, 'oss-cn-hongkong')}
   ossPath: ${env(OSS_PATH, 'myy-app')}
 resources:
-  h5-build-deploy:
+  myy-app:
     component: fc3
     actions:
       pre-deploy:
