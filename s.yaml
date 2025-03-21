@@ -23,3 +23,6 @@ resources:
         # Upload to OSS using Node.js script
         - run: export PATH=/usr/local/versions/node/v20.8.1/bin:$PATH && node upload.js
           path: ./
+    props:
+      serviceName: 'my-service' 
+      region: ${vars.region}
