@@ -23,6 +23,18 @@ resources:
         # Upload to OSS using Node.js script
         - run: export PATH=/usr/local/versions/node/v20.8.1/bin:$PATH && node upload.js
           path: ./
-    props:
-      serviceName: 'my-service' 
+props:
+      serviceName: 'my-service'
+      domainName: 'foliumatrix.com'  
       region: ${vars.region}
+      functionName: ${vars.functionName}
+      runtime: 'custom.debian10'
+      description: 'build and upload frontend'
+      timeout: 60
+      memorySize: 512
+      environmentVariables:
+        PATH: >-
+          /var/fc/lang/nodejs20/bin:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/bin
+        NODE_PATH: /opt/nodejs/node_modules
+      cpu: 0.5
+      diskSize: 512
