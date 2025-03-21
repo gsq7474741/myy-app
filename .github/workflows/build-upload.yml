@@ -33,4 +33,5 @@ jobs:
         ALIBABA_CLOUD_ACCESS_KEY_SECRET: ${{ secrets.ALIBABA_CLOUD_ACCESS_KEY_SECRET }}
         OSS_BUCKET: ${{ vars.OSS_BUCKET }}
         OSS_REGION: ${{ vars.OSS_REGION }}
-    - run: node upload.js
+        OSS_PATH: ${{ vars.OSS_PATH }}
+      run: node upload.js

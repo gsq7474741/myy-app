@@ -8,7 +8,7 @@ const accessKeyId = process.env.ALIBABA_CLOUD_ACCESS_KEY_ID;
 const accessKeySecret = process.env.ALIBABA_CLOUD_ACCESS_KEY_SECRET;
 const bucketName = process.env.OSS_BUCKET;
 const region = process.env.OSS_REGION;
-const ossPath = process.env.OSS_PATH;
+const ossPath = ''
 
 if (!accessKeyId || !accessKeySecret) {
   console.error('Missing Alibaba Cloud credentials. Please set ALIBABA_CLOUD_ACCESS_KEY_ID and ALIBABA_CLOUD_ACCESS_KEY_SECRET environment variables.');
