@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  taro-ui-vue3:
+    hash: s7z5t7a7zit4bwg45oqemx7j5m
+    path: patches/taro-ui-vue3.patch
+
 importers:
 
   .:
@@ -79,7 +84,7 @@ importers:
         version: 2.1.0(@tarojs/taro-h5@4.0.8(sbppn6jt2mr23yhyuagsmwfji4))(@tarojs/taro@4.0.8(@tarojs/components@4.0.8(@tarojs/helper@4.0.8)(html-webpack-plugin@5.6.3(webpack@5.91.0(@swc/core@1.3.96)(esbuild@0.23.1)))(postcss@8.4.49)(react@19.0.0)(rollup@3.29.5)(vue@3.5.13(typescript@5.7.2))(webpack-chain@6.5.1)(webpack-dev-server@4.15.2(webpack@5.91.0(@swc/core@1.3.96)(esbuild@0.23.1)))(webpack@5.91.0(@swc/core@1.3.96)(esbuild@0.23.1)))(@tarojs/helper@4.0.8)(@tarojs/shared@4.0.8)(html-webpack-plugin@5.6.3(webpack@5.91.0(@swc/core@1.3.96)(esbuild@0.23.1)))(postcss@8.4.49)(rollup@3.29.5)(vue@3.5.13(typescript@5.7.2))(webpack-chain@6.5.1)(webpack-dev-server@4.15.2(webpack@5.91.0(@swc/core@1.3.96)(esbuild@0.23.1)))(webpack@5.91.0(@swc/core@1.3.96)(esbuild@0.23.1)))
       taro-ui-vue3:
         specifier: 1.0.0-alpha.21
-        version: 1.0.0-alpha.21(m7eqvdudia65e4pdor4aodyxie)
+        version: 1.0.0-alpha.21(patch_hash=s7z5t7a7zit4bwg45oqemx7j5m)(m7eqvdudia65e4pdor4aodyxie)
       vue:
         specifier: ^3.5.13
         version: 3.5.13(typescript@5.7.2)
@@ -19611,7 +19616,7 @@ snapshots:
       lodash-wechat: 1.0.0
       querystring: 0.2.1
 
-  taro-ui-vue3@1.0.0-alpha.21(m7eqvdudia65e4pdor4aodyxie):
+  taro-ui-vue3@1.0.0-alpha.21(patch_hash=s7z5t7a7zit4bwg45oqemx7j5m)(m7eqvdudia65e4pdor4aodyxie):
     dependencies:
       '@tarojs/components': 4.0.8(@tarojs/helper@4.0.8)(html-webpack-plugin@5.6.3(webpack@5.91.0(@swc/core@1.3.96)(esbuild@0.23.1)))(postcss@8.4.49)(react@19.0.0)(rollup@3.29.5)(vue@3.5.13(typescript@5.7.2))(webpack-chain@6.5.1)(webpack-dev-server@4.15.2(webpack@5.91.0(@swc/core@1.3.96)(esbuild@0.23.1)))(webpack@5.91.0(@swc/core@1.3.96)(esbuild@0.23.1))
       '@tarojs/taro': 4.0.8(@tarojs/components@4.0.8(@tarojs/helper@4.0.8)(html-webpack-plugin@5.6.3(webpack@5.91.0(@swc/core@1.3.96)(esbuild@0.23.1)))(postcss@8.4.49)(react@19.0.0)(rollup@3.29.5)(vue@3.5.13(typescript@5.7.2))(webpack-chain@6.5.1)(webpack-dev-server@4.15.2(webpack@5.91.0(@swc/core@1.3.96)(esbuild@0.23.1)))(webpack@5.91.0(@swc/core@1.3.96)(esbuild@0.23.1)))(@tarojs/helper@4.0.8)(@tarojs/shared@4.0.8)(html-webpack-plugin@5.6.3(webpack@5.91.0(@swc/core@1.3.96)(esbuild@0.23.1)))(postcss@8.4.49)(rollup@3.29.5)(vue@3.5.13(typescript@5.7.2))(webpack-chain@6.5.1)(webpack-dev-server@4.15.2(webpack@5.91.0(@swc/core@1.3.96)(esbuild@0.23.1)))(webpack@5.91.0(@swc/core@1.3.96)(esbuild@0.23.1))

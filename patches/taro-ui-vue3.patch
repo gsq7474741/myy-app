@@ -1,0 +1,13 @@
+diff --git a/dist/style/variables/default.scss b/dist/style/variables/default.scss
+index f0d5543196abf59d455ea8d9d73cfd264b702347..b209e6a769688e389fcb01c1c614090de6005a7f 100644
+--- a/dist/style/variables/default.scss
++++ b/dist/style/variables/default.scss
+@@ -4,7 +4,7 @@
+ 
+ @import '../mixins/libs/tint';
+ 
+-$hd: 2 !default; // 基本单位
++$hd: 1 !default; // 基本单位
+ 
+ /* The Color of O2Team Brand */
+ $color-brand: #6190E8 !default;

@@ -6,6 +6,7 @@
 export {}
 declare global {
   const AiMessageSender: typeof import('../src/stores/chat')['AiMessageSender']
+  const DifySseH5: typeof import('../src/api/index')['DifySseH5']
   const EffectScope: typeof import('vue')['EffectScope']
   const ORDER_STATUS_INFO: typeof import('../src/utils/constants')['ORDER_STATUS_INFO']
   const cn: typeof import('../src/utils/index')['cn']
@@ -15,6 +16,8 @@ declare global {
   const defineAsyncComponent: typeof import('vue')['defineAsyncComponent']
   const defineComponent: typeof import('vue')['defineComponent']
   const effectScope: typeof import('vue')['effectScope']
+  const formatPH: typeof import('../src/utils/format')['formatPH']
+  const getApiUrl: typeof import('../src/api/index')['getApiUrl']
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
   const getValue: typeof import('../src/utils/index')['getValue']
@@ -60,6 +63,7 @@ declare global {
   const useActionSheet: typeof import('taro-hooks')['useActionSheet']
   const useAlertBeforeUnload: typeof import('taro-hooks')['useAlertBeforeUnload']
   const useApp: typeof import('taro-hooks')['useApp']
+  const useAppStore: typeof import('../src/stores/app')['useAppStore']
   const useArrayBuffer: typeof import('taro-hooks')['useArrayBuffer']
   const useAttrs: typeof import('vue')['useAttrs']
   const useAudio: typeof import('taro-hooks')['useAudio']
@@ -150,12 +154,16 @@ declare global {
   // @ts-ignore
   export type { AiMessageSender } from '../src/stores/chat'
   import('../src/stores/chat')
+  // @ts-ignore
+  export type { DifySseH5 } from '../src/api/index'
+  import('../src/api/index')
 }
 // for vue template auto import
 import { UnwrapRef } from 'vue'
 declare module 'vue' {
   interface ComponentCustomProperties {
     readonly AiMessageSender: UnwrapRef<typeof import('../src/stores/chat')['AiMessageSender']>
+    readonly DifySseH5: UnwrapRef<typeof import('../src/api/index')['DifySseH5']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly ORDER_STATUS_INFO: UnwrapRef<typeof import('../src/utils/constants')['ORDER_STATUS_INFO']>
     readonly cn: UnwrapRef<typeof import('../src/utils/index')['cn']>
@@ -165,6 +173,8 @@ declare module 'vue' {
     readonly defineAsyncComponent: UnwrapRef<typeof import('vue')['defineAsyncComponent']>
     readonly defineComponent: UnwrapRef<typeof import('vue')['defineComponent']>
     readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
+    readonly formatPH: UnwrapRef<typeof import('../src/utils/format')['formatPH']>
+    readonly getApiUrl: UnwrapRef<typeof import('../src/api/index')['getApiUrl']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
     readonly getValue: UnwrapRef<typeof import('../src/utils/index')['getValue']>
@@ -210,6 +220,7 @@ declare module 'vue' {
     readonly useActionSheet: UnwrapRef<typeof import('taro-hooks')['useActionSheet']>
     readonly useAlertBeforeUnload: UnwrapRef<typeof import('taro-hooks')['useAlertBeforeUnload']>
     readonly useApp: UnwrapRef<typeof import('taro-hooks')['useApp']>
+    readonly useAppStore: UnwrapRef<typeof import('../src/stores/app')['useAppStore']>
     readonly useArrayBuffer: UnwrapRef<typeof import('taro-hooks')['useArrayBuffer']>
     readonly useAttrs: UnwrapRef<typeof import('vue')['useAttrs']>
     readonly useAudio: UnwrapRef<typeof import('taro-hooks')['useAudio']>
