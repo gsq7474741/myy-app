@@ -5,6 +5,7 @@ export default {
     "pages/courtyard/index-v2",
     "pages/courtyard/maintenance",
     "pages/me/index",
+    "pages/me/login",
     "pages/me/order/list",
     "pages/me/order/detail",
     "pages/me/card/list",

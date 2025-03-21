@@ -10,6 +10,9 @@ const getDifyUrl = () => {
   return `${process.env.TARO_APP_AI_API_BASE_URL!}/chat-messages`;
 };
 
+export const getApiUrl = <T extends string>(path: T) =>
+  `${process.env.TARO_APP_API_BASE_URL!}/${path}` as const;
+
 export class DifySseH5 {
   abortController: AbortController;
   constructor() {

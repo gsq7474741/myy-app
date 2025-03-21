@@ -1,5 +1,10 @@
 <template>
-  <Layout>
+  <view class="flex flex-col h-full">
+    <CommonNavbar
+      :show-back="true"
+      title="我的订单"
+      class="static flex-none text-black"
+    ></CommonNavbar>
     <view class="size-full bg-gray-100 p-4">
       <view
         v-if="orderDetail"
@@ -30,7 +35,7 @@
         </view>
       </view>
     </view>
-  </Layout>
+  </view>
 </template>
 
 <script setup lang="ts">

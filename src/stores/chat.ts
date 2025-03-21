@@ -22,6 +22,7 @@ export const useChatStore = defineStore("chat", () => {
   // const lastMeMessage = computed(() => {
   //   return messages[lastMeMessageIndex.value];
   // });
+  const conversationId = ref("");
   const lastAiMessageIndex = ref(-1);
   const lastAiMessage = computed(() => {
     return messages[lastAiMessageIndex.value];
@@ -48,6 +49,7 @@ export const useChatStore = defineStore("chat", () => {
         id: message.message_id,
         loading: true,
       });
+      conversationId.value = message.conversation_id;
     } else if (event === "message") {
       if (message.message_id === lastAiMessage.value.id) {
         lastAiMessage.value.content += message.answer;
@@ -73,6 +75,7 @@ export const useChatStore = defineStore("chat", () => {
         inputs: {},
         response_mode: "streaming",
         user: "test",
+        conversation_id: conversationId.value,
       },
       processMessage,
       () => {

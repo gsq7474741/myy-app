@@ -4,11 +4,29 @@ import Tree1Img from "@/assets/images/tree-1.png";
 import Light1Img from "@/assets/images/light-1.png";
 import WaterOpen from "@/assets/images/water-open.png";
 import WaterClose from "@/assets/images/water-close.png";
+import { storeToRefs } from "pinia";
+import { formatPH } from "../../utils/format";
 
-const waterEnabled = ref(false);
-
+const appStore = useAppStore();
+const courtyardStore = useCourtyardStore();
+const { currentDevice } = storeToRefs(courtyardStore);
+const isWatering = computed({
+  get: () => {
+    return (currentDevice?.value?.WaterOutletSwitch ?? 0) === 1;
+  },
+  set: (v) => {
+    Taro.showToast({ title: "Demo账号不支持水泵控制", icon: "error" });
+  },
+});
+const onClickBooking = () => {
+  Taro.showToast({ title: "Demo账号不支持预约", icon: "error" });
+};
 const goToChat = () => {
-  Taro.navigateTo({ url: "/pages/chat/index" });
+  if (appStore.isLogin) {
+    Taro.navigateTo({ url: "/pages/chat/index" });
+  } else {
+    appStore.goToLogin();
+  }
 };
 </script>
 <template>
@@ -32,12 +50,13 @@ const goToChat = () => {
         <view class="w-full flex justify-between items-center mb-6">
           <button
             class="m-0 bg-green text-white text-base w-40 h-11.25 flex items-center justify-center rounded-2xl"
+            @click="onClickBooking"
           >
             预约养护
           </button>
           <CommonSwitch
-            v-model="waterEnabled"
-            :thumb-image="waterEnabled ? WaterOpen : WaterClose"
+            v-model="isWatering"
+            :thumb-image="isWatering ? WaterOpen : WaterClose"
           ></CommonSwitch>
         </view>
         <view class="grid grid-cols-2 gap-2">
@@ -49,11 +68,13 @@ const goToChat = () => {
                 >空气湿度</text
               >
               <view class="text-blue">
-                <text class="text-xl">60</text
+                <text class="text-xl">{{
+                  currentDevice?.RelativeHumidity ?? 60
+                }}</text
                 ><text class="text-xs text-[10px]">%</text>
                 <CommonProgress
                   class="mt-2"
-                  :value="60"
+                  :value="currentDevice?.RelativeHumidity ?? 60"
                   color="#007AFF"
                   bg-color="#007AFF40"
                 ></CommonProgress>
@@ -64,7 +85,9 @@ const goToChat = () => {
                 >空气温度</text
               >
               <view class="text-blue">
-                <text class="text-xl">60</text
+                <text class="text-xl">{{
+                  currentDevice?.CurrentTemperature ?? 23
+                }}</text
                 ><text class="text-xs text-[10px]">℃</text>
               </view>
             </view>
@@ -106,11 +129,13 @@ const goToChat = () => {
                   >土壤水分</text
                 >
                 <view class="text-brown">
-                  <text class="text-xl">20.6</text
+                  <text class="text-xl">{{
+                    currentDevice?.SoilHumidity ?? 60
+                  }}</text
                   ><text class="text-xs text-[10px]">%</text>
                   <CommonProgress
                     class="mt-2"
-                    :value="60"
+                    :value="currentDevice?.SoilHumidity ?? 60"
                     color="#A2845E"
                     bg-color="#A2845E33"
                   ></CommonProgress>
@@ -121,7 +146,9 @@ const goToChat = () => {
                   >土壤温度</text
                 >
                 <view class="text-brown">
-                  <text class="text-xl">23</text
+                  <text class="text-xl">{{
+                    currentDevice?.SoilTemperature ?? 23
+                  }}</text
                   ><text class="text-xs text-[10px]">℃</text>
                 </view>
               </view>
@@ -132,8 +159,12 @@ const goToChat = () => {
                   >土壤PH值</text
                 >
                 <view class="text-brown">
-                  <text class="text-xl">碱性</text
-                  ><text class="text-xs text-[10px]">(6)</text>
+                  <text class="text-xl">{{
+                    formatPH(currentDevice?.SoilPH ?? 7)
+                  }}</text
+                  ><text class="text-xs text-[10px]"
+                    >({{ currentDevice?.SoilPH ?? 7 }})</text
+                  >
                   <view class="h-[1px] bg-brown/40 w-full mt-1.5"></view>
                 </view>
               </view>
@@ -142,7 +173,7 @@ const goToChat = () => {
                   >土壤导电率</text
                 >
                 <view class="text-brown">
-                  <text class="text-xl">60</text
+                  <text class="text-xl">{{ currentDevice?.SoilEC ?? 60 }}</text
                   ><text class="text-xs text-[10px]">μs/cm℃</text>
                 </view>
               </view>
@@ -159,7 +190,9 @@ const goToChat = () => {
                 <view class="text-black">
                   <view class="flex items-center justify-between">
                     <view
-                      ><text class="text-xl">20.6</text
+                      ><text class="text-xl">{{
+                        currentDevice?.SoilN ?? 20.6
+                      }}</text
                       ><text class="text-xs text-[10px]">%</text></view
                     >
                     <view>
@@ -182,7 +215,9 @@ const goToChat = () => {
                 <view class="text-black">
                   <view class="flex items-center justify-between">
                     <view
-                      ><text class="text-xl">20.6</text
+                      ><text class="text-xl">{{
+                        currentDevice?.SoilK ?? 20.6
+                      }}</text
                       ><text class="text-xs text-[10px]">%</text></view
                     >
                     <view>
@@ -207,7 +242,9 @@ const goToChat = () => {
                 <view class="text-black">
                   <view class="flex items-center justify-between">
                     <view
-                      ><text class="text-xl">20.6</text
+                      ><text class="text-xl">{{
+                        currentDevice?.SoilP ?? 20.6
+                      }}</text
                       ><text class="text-xs text-[10px]">%</text></view
                     >
                     <view>
@@ -237,9 +274,6 @@ page {
   background-color: #f5f5f5;
 }
 
-.main-content {
-  background: linear-gradient(180deg, #7bcf7e 0%, #edf1ed 30.39%);
-}
 .card-1 {
   background: linear-gradient(
     180deg,

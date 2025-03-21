@@ -1,5 +1,11 @@
 <template>
-  <Layout>
+  <view class="flex flex-col h-full">
+    <CommonNavbar
+      :show-back="true"
+      :back="backToHome"
+      title="我的订单"
+      class="static flex-none text-black"
+    ></CommonNavbar>
     <AtTabs
       class="order-list__tabs"
       :current="currentTab"
@@ -17,11 +23,12 @@
         <OrderList :data="item.list"></OrderList>
       </AtTabsPane>
     </AtTabs>
-  </Layout>
+  </view>
 </template>
 
 <script setup lang="ts">
 import { AtTabs, AtTabsPane } from "taro-ui-vue3";
+import Taro from "@tarojs/taro";
 
 const orderStore = useOrderStore();
 const currentTab = ref(0);
@@ -55,6 +62,10 @@ const tabList = ref([
 
 const handleClick = (index: number) => {
   currentTab.value = index;
+};
+
+const backToHome = () => {
+  Taro.navigateTo({ url: "/pages/me/index" });
 };
 </script>
 
