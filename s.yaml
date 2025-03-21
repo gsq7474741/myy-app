@@ -64,10 +64,10 @@ resources:
               return arrayOfFiles;
             };
             
-            // Upload all files from dist/h5 directory
+            // Upload all files from dist directory
             const uploadFiles = async () => {
               try {
-                const sourceDir = './dist/h5';
+                const sourceDir = './dist';
                 const allFiles = getAllFiles(sourceDir);
                 
                 for (const filePath of allFiles) {
@@ -78,8 +78,9 @@ resources:
                   
                   console.log(`Uploading ${filePath} to oss://${bucketName}/${ossKey}`);
                   
-                  // Upload file to OSS
-                  const result = await client.put(ossKey, filePath);
+                  // Upload file to OSS using file stream
+                  const fileStream = fs.createReadStream(filePath);
+                  const result = await client.put(ossKey, fileStream);
                   console.log(`Uploaded successfully: ${result.url}`);
                 }
                 
