@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { DifySseH5 } from "../api/index";
+import Taro from "@tarojs/taro";
 
 export enum AiMessageSender {
   myy,
@@ -16,6 +17,7 @@ export type AiMessageItem = {
 };
 
 export const useChatStore = defineStore("chat", () => {
+  const appStore = useAppStore();
   const messages = reactive<AiMessageItem[]>([]);
   const sendable = ref(true);
   const lastMeMessageIndex = ref(-1);
@@ -69,20 +71,28 @@ export const useChatStore = defineStore("chat", () => {
       loading: false,
     });
 
-    sseH5.start(
-      {
-        query: content,
-        inputs: {},
-        response_mode: "streaming",
-        user: "test",
-        conversation_id: conversationId.value,
-      },
-      processMessage,
-      () => {
-        lastAiMessage.value.loading = false;
-        sendable.value = true;
-      }
-    );
+    try {
+      sseH5.start(
+        {
+          query: content,
+          inputs: {
+            user_id: appStore.userId,
+          },
+          response_mode: "streaming",
+          user: appStore.userId,
+          conversation_id: conversationId.value,
+        },
+        processMessage,
+        () => {
+          lastAiMessage.value.loading = false;
+          sendable.value = true;
+        }
+      );
+    } catch {
+      Taro.showToast({ title: "网络错误", icon: "error" });
+      lastAiMessage.value.loading = false;
+      sendable.value = true;
+    }
   };
 
   return { messages, addMessage, push, sendable };
