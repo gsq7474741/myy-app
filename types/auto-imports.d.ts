@@ -74,6 +74,7 @@ declare global {
   const useBoolean: typeof import('taro-hooks')['useBoolean']
   const useBrightness: typeof import('taro-hooks')['useBrightness']
   const useCamera: typeof import('taro-hooks')['useCamera']
+  const useCameraH5: typeof import('../src/utils/camera')['useCameraH5']
   const useCardStore: typeof import('../src/stores/card')['useCardStore']
   const useChatStore: typeof import('../src/stores/chat')['useChatStore']
   const useChooseAddress: typeof import('taro-hooks')['useChooseAddress']
@@ -231,6 +232,7 @@ declare module 'vue' {
     readonly useBoolean: UnwrapRef<typeof import('taro-hooks')['useBoolean']>
     readonly useBrightness: UnwrapRef<typeof import('taro-hooks')['useBrightness']>
     readonly useCamera: UnwrapRef<typeof import('taro-hooks')['useCamera']>
+    readonly useCameraH5: UnwrapRef<typeof import('../src/utils/camera')['useCameraH5']>
     readonly useCardStore: UnwrapRef<typeof import('../src/stores/card')['useCardStore']>
     readonly useChatStore: UnwrapRef<typeof import('../src/stores/chat')['useChatStore']>
     readonly useChooseAddress: UnwrapRef<typeof import('taro-hooks')['useChooseAddress']>

@@ -29,7 +29,15 @@
         ></view>
         <text :class="cn('font-bold')">{{ title || "木易养" }}</text>
       </view>
-      <view></view>
+      <view>
+        <template v-if="rightHandler && rightText">
+          <view
+            class="flex items-center gap-2 text-sm text-white bg-green rounded-lg py-1.5 px-4 hover:bg-op-80"
+            @click="rightHandler"
+            >提交</view
+          >
+        </template>
+      </view>
     </view>
   </view>
 </template>
@@ -46,6 +54,8 @@ const props = defineProps<{
   title?: string;
   back?: () => void;
   class?: ClassValue;
+  rightText?: string;
+  rightHandler?: () => void;
 }>();
 
 const canBack = ref(false);
