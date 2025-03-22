@@ -71,7 +71,7 @@ const password = ref("123456");
 const loading = ref(false);
 
 const backToHome = () => {
-  Taro.navigateTo({ url: "/pages/me/index" });
+  Taro.navigateTo({ url: "/pages/courtyard/index-v2" });
 };
 
 const onClickLogin = async () => {
