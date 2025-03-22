@@ -11,7 +11,7 @@ export const useAppStore = defineStore("app", () => {
   const userInfo = ref<UserInfo | null>();
   const userToken = ref("");
   const userId = ref(1);
-  console.log(route);
+
   if (route.params.quick) {
     userId.value = route.params.id;
     userToken.value = route.params.token;

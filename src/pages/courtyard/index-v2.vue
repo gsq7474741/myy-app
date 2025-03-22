@@ -28,6 +28,9 @@ const goToChat = () => {
     appStore.goToLogin();
   }
 };
+const test = () => {
+  Taro.navigateTo({ url: "/pages/courtyard/camera" });
+};
 </script>
 <template>
   <view class="main-content relative size-full pt-[56px]">
@@ -39,7 +42,6 @@ const goToChat = () => {
     ></CommonNavbar>
     <view class="relative px-2 size-full flex flex-col items-center gap-4">
       <GardenFloatStatus class="absolute top-3 left-4"></GardenFloatStatus>
-      <view></view>
       <GardenChatBtn
         class="absolute top-3 right-4"
         @click="goToChat"
@@ -49,12 +51,20 @@ const goToChat = () => {
       </view>
       <view class="bg-white/72 rounded-2xl px-2 py-1.75 w-full">
         <view class="w-full flex justify-between items-center mb-6">
-          <button
-            class="m-0 bg-green text-white text-base w-40 h-11.25 flex items-center justify-center rounded-2xl"
-            @click="onClickBooking"
-          >
-            预约养护
-          </button>
+          <view class="flex items-center gap-3">
+            <button
+              class="m-0 bg-green text-white text-base w-40 h-11.25 flex items-center justify-center rounded-2xl"
+              @click="onClickBooking"
+            >
+              预约养护
+            </button>
+            <view
+              @click="test"
+              class="rounded-full bg-green size-11.25 flex items-center justify-center"
+            >
+              <view class="size-7 i-myy-camera text-white"></view>
+            </view>
+          </view>
           <CommonSwitch
             v-model="isWatering"
             :thumb-image="isWatering ? WaterOpen : WaterClose"
