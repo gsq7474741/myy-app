@@ -34,7 +34,7 @@
 <script setup lang="ts">
 import Taro from "@tarojs/taro";
 const chatStore = useChatStore();
-
+const appStore = useAppStore();
 const hasMessages = computed(() => chatStore.messages.length > 0);
 
 watch(
@@ -51,6 +51,10 @@ watch(
   },
   { deep: true }
 );
+
+onMounted(() => {
+  appStore.goToLogin();
+});
 </script>
 
 <style scoped></style>

@@ -17,6 +17,7 @@ export type AiMessageItem = {
 };
 
 export const useChatStore = defineStore("chat", () => {
+  const appStore = useAppStore();
   const messages = reactive<AiMessageItem[]>([]);
   const sendable = ref(true);
   const lastMeMessageIndex = ref(-1);
@@ -74,9 +75,11 @@ export const useChatStore = defineStore("chat", () => {
       sseH5.start(
         {
           query: content,
-          inputs: {},
+          inputs: {
+            user_id: appStore.userId,
+          },
           response_mode: "streaming",
-          user: "test",
+          user: appStore.userId,
           conversation_id: conversationId.value,
         },
         processMessage,

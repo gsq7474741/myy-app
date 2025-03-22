@@ -6,9 +6,10 @@ type UserInfo = {
   username: string;
 };
 export const useAppStore = defineStore("app", () => {
-  const isLogin = ref(!false);
+  const isLogin = ref(false);
   const userInfo = ref<UserInfo | null>();
   const userToken = ref("");
+  const userId = ref(1);
   const loginByPassword = async (username: string, password: string) => {
     return new Promise<UserInfo>((resolve, reject) => {
       Taro.request({
@@ -35,6 +36,7 @@ export const useAppStore = defineStore("app", () => {
     });
   };
   const goToLogin = () => {
+    if (isLogin.value) return;
     Taro.navigateTo({
       url: "/pages/me/login",
     });
@@ -42,6 +44,7 @@ export const useAppStore = defineStore("app", () => {
   return {
     isLogin,
     userInfo,
+    userId,
     loginByPassword,
     goToLogin,
     userToken,
