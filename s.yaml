@@ -1,0 +1,40 @@
+edition: 3.0.0
+name: myy-app
+access: 'default'
+vars:
+  region: 'cn-hongkong'
+  functionName: myy-app-${env(DOMAIN_PREFIX)}
+  ossBucket: ${env(OSS_BUCKET, 'your-bucket-name')}
+  ossRegion: ${env(OSS_REGION, 'oss-cn-hongkong')}
+  ossPath: ${env(OSS_PATH, 'myy-app')}
+resources:
+  myy-app:
+    component: fc3
+    actions:
+      pre-deploy:
+        # Install dependencies and build h5 version
+        - run: export PATH=/usr/local/versions/node/v20.8.1/bin:$PATH && npm install --legacy-peer-deps
+          path: ./
+        - run: export PATH=/usr/local/versions/node/v20.8.1/bin:$PATH && npm run build:h5
+          path: ./
+        # Install ali-oss dependency for Node.js OSS upload
+        - run: export PATH=/usr/local/versions/node/v20.8.1/bin:$PATH && npm install ali-oss --no-save --legacy-peer-deps
+          path: ./
+        # Upload to OSS using Node.js script
+        - run: export PATH=/usr/local/versions/node/v20.8.1/bin:$PATH && node upload.js
+          path: ./
+props:
+      serviceName: 'my-service'
+      domainName: 'foliumatrix.com'  
+      region: ${vars.region}
+      functionName: ${vars.functionName}
+      runtime: 'custom.debian10'
+      description: 'build and upload frontend'
+      timeout: 60
+      memorySize: 512
+      environmentVariables:
+        PATH: >-
+          /var/fc/lang/nodejs20/bin:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/bin
+        NODE_PATH: /opt/nodejs/node_modules
+      cpu: 0.5
+      diskSize: 512

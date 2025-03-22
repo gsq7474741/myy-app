@@ -42,6 +42,7 @@ const test = () => {
     ></CommonNavbar>
     <view class="relative px-2 size-full flex flex-col items-center gap-4">
       <GardenFloatStatus class="absolute top-3 left-4"></GardenFloatStatus>
+      <view></view>
       <GardenChatBtn
         class="absolute top-3 right-4"
         @click="goToChat"
