@@ -57,6 +57,7 @@ const handleSend = () => {
   .taro-textarea {
     background: transparent;
     min-height: 6ex;
+    font-size: 16px;
   }
 }
 </style>

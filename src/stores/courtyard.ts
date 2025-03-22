@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import Taro from "@tarojs/taro";
+import { useCameraH5 } from "../utils/camera";
 
 type DeviceInfo = {
   CurrentTemperature: number;
@@ -57,6 +58,7 @@ export const useCourtyardStore = defineStore("courtyard", () => {
   setInterval(() => {
     getDevices();
   }, 10000);
+
   return {
     treeList,
     getTree,

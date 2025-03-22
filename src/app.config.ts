@@ -4,6 +4,7 @@ export default {
     "pages/chat/index",
     "pages/courtyard/index-v2",
     "pages/courtyard/maintenance",
+    "pages/courtyard/camera",
     "pages/me/index",
     "pages/me/login",
     "pages/me/order/list",
