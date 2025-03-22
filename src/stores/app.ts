@@ -6,10 +6,20 @@ type UserInfo = {
   username: string;
 };
 export const useAppStore = defineStore("app", () => {
+  const [route] = useRouter();
   const isLogin = ref(false);
   const userInfo = ref<UserInfo | null>();
   const userToken = ref("");
   const userId = ref(1);
+  console.log(route);
+  if (route.params.quick) {
+    userId.value = route.params.id;
+    userToken.value = route.params.token;
+    if (userToken.value && userId.value) {
+      isLogin.value = true;
+      Taro.navigateTo({ url: "/pages/me/index" });
+    }
+  }
   const loginByPassword = async (username: string, password: string) => {
     return new Promise<UserInfo>((resolve, reject) => {
       Taro.request({
