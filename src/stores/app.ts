@@ -6,7 +6,7 @@ type UserInfo = {
   username: string;
 };
 export const useAppStore = defineStore("app", () => {
-  const isLogin = ref(false);
+  const isLogin = ref(!false);
   const userInfo = ref<UserInfo | null>();
   const userToken = ref("");
   const loginByPassword = async (username: string, password: string) => {
