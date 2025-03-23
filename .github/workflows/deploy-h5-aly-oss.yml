@@ -4,14 +4,8 @@
 name: Deploy h5 to Alibaba Cloud OSS
 
 on:
-  repository_dispatch:
-    types: [deploy-h5]
-  workflow_dispatch:
-    inputs:
-      ref:
-        description: 'Branch or tag ref to deploy'
-        required: true
-        default: 'develop'
+  push:
+    branches: [ "develop" ]
 
 jobs:
   deploy:
@@ -19,8 +13,6 @@ jobs:
     environment: aly-deploy-test
     steps:
     - uses: actions/checkout@v4
-      with:
-        ref: ${{ github.event.client_payload.ref || github.event.inputs.ref }}
     
     - name: Install pnpm
       uses: pnpm/action-setup@v2

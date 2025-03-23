@@ -4,11 +4,8 @@
 name: Build h5
 
 on:
-  push:
-    branches: [ "develop" ]
   pull_request:
     branches: [ "develop" ]
-  workflow_dispatch:
 
 jobs:
   setup:
@@ -82,20 +79,4 @@ jobs:
     # 构建项目
     - name: Build project
       run: pnpm run build:h5
-      
-    # 上传构建产物作为 artifacts
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: dist-files
-        path: dist
-        retention-days: 1
-    
-    # 只有在推送到 develop 分支时才触发部署工作流
-    - name: Trigger deploy workflow
-      if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
-      uses: peter-evans/repository-dispatch@v2
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        event-type: deploy-h5
-        client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'
+
