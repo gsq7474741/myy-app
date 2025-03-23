@@ -1,0 +1,47 @@
+# This workflow will deploy the built h5 app to Alibaba Cloud OSS
+# It only runs when code is pushed to the develop branch (when PRs are merged)
+
+name: Deploy h5 to Alibaba Cloud OSS
+
+on:
+  push:
+    branches: [ "develop" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: aly-deploy-test
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install pnpm
+      uses: pnpm/action-setup@v2
+      with:
+        version: latest
+        run_install: false
+
+    - name: Use Node.js 20.x
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20.x
+
+    # 下载构建产物
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: dist-files
+        path: dist
+    
+    # 安装 tsx 运行时依赖
+    - name: Install tsx
+      run: pnpm install tsx @types/node ali-oss @types/ali-oss
+
+    # 上传到阿里云 OSS
+    - name: Upload to aly OSS
+      env:
+        ALIBABA_CLOUD_ACCESS_KEY_ID: ${{ secrets.ALIBABA_CLOUD_ACCESS_KEY_ID }}
+        ALIBABA_CLOUD_ACCESS_KEY_SECRET: ${{ secrets.ALIBABA_CLOUD_ACCESS_KEY_SECRET }}
+        OSS_BUCKET: ${{ vars.OSS_BUCKET }}
+        OSS_REGION: ${{ vars.OSS_REGION }}
+        OSS_PATH: ${{ vars.OSS_PATH }}
+      run: npx tsx upload.ts
