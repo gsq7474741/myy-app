@@ -30,6 +30,11 @@ jobs:
       run: pnpm install --frozen-lockfile
     
     - name: Build project
+      env:
+        NODE_ENV: production
+        TARO_APP_AI_API_KEY: ${{ secrets.TARO_APP_AI_API_KEY }}
+        TARO_APP_AI_API_BASE_URL: ${{ vars.TARO_APP_AI_API_BASE_URL }}
+        TARO_APP_API_BASE_URL: ${{ vars.TARO_APP_API_BASE_URL }}
       run: pnpm run build:h5
     
     # 安装 tsx 运行时依赖
@@ -41,7 +46,7 @@ jobs:
       env:
         ALIBABA_CLOUD_ACCESS_KEY_ID: ${{ secrets.ALIBABA_CLOUD_ACCESS_KEY_ID }}
         ALIBABA_CLOUD_ACCESS_KEY_SECRET: ${{ secrets.ALIBABA_CLOUD_ACCESS_KEY_SECRET }}
-        OSS_BUCKET: ${{ vars.OSS_BUCKET }}
-        OSS_REGION: ${{ vars.OSS_REGION }}
-        OSS_PATH: ${{ vars.OSS_PATH }}
+        PAGE_OSS_BUCKET: ${{ vars.PAGE_OSS_BUCKET }}
+        PAGE_OSS_REGION: ${{ vars.PAGE_OSS_REGION }}
+        PAGE_OSS_PATH: ${{ vars.PAGE_OSS_PATH }}
       run: npx tsx upload.ts

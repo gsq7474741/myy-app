@@ -5,8 +5,8 @@ import * as path from 'path';
 // OSS configuration
 const accessKeyId: string | undefined = process.env.ALIBABA_CLOUD_ACCESS_KEY_ID;
 const accessKeySecret: string | undefined = process.env.ALIBABA_CLOUD_ACCESS_KEY_SECRET;
-const bucketName: string | undefined = process.env.OSS_BUCKET;
-const region: string | undefined = process.env.OSS_REGION;
+const bucketName: string | undefined = process.env.PAGE_OSS_BUCKET;
+const region: string | undefined = process.env.PAGE_OSS_REGION;
 const ossPath: string = '';
 
 if (!accessKeyId || !accessKeySecret) {

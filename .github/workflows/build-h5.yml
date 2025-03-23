@@ -78,5 +78,7 @@ jobs:
 
     # 构建项目
     - name: Build project
+      env:
+        NODE_ENV: production
       run: pnpm run build:h5
 
