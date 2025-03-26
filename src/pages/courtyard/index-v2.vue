@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import Taro from "@tarojs/taro";
 import Tree1Img from "@/assets/images/tree-1.png";
+import TreeLackWaterImg from "@/assets/images/tree-lack-water.png";
 import Light1Img from "@/assets/images/light-1.png";
 import WaterOpen from "@/assets/images/water-open.png";
 import WaterClose from "@/assets/images/water-close.png";
@@ -48,23 +49,24 @@ const test = () => {
         @click="goToChat"
       ></GardenChatBtn>
       <view class="mt-[30px]">
-        <image :src="Tree1Img" class="size-auto"></image>
+        <image :src="TreeLackWaterImg" class="size-auto"></image>
       </view>
       <view class="bg-white/72 rounded-2xl px-2 py-1.75 w-full">
-        <view class="w-full flex justify-between items-center mb-6">
-          <view class="flex items-center gap-3">
+        <view class="w-full flex justify-between items-center mb-6 pt-1.5">
+          <view>
             <button
-              class="m-0 bg-green text-white text-base w-40 h-11.25 flex items-center justify-center rounded-2xl"
+              class="m-0 bg-green text-white text-base w-25 h-11.25 flex items-center justify-center rounded-xl"
               @click="onClickBooking"
             >
               预约养护
             </button>
-            <view
-              @click="test"
-              class="rounded-full bg-green size-11.25 flex items-center justify-center"
-            >
-              <view class="size-7 i-myy-camera text-white"></view>
-            </view>
+          </view>
+          <view
+            @click="test"
+            class="rounded-xl bg-green w-28 h-11.25 flex items-center justify-center"
+          >
+            <text class="text-white pr-1">拍照看诊</text>
+            <view class="size-5 i-myy-camera text-white"></view>
           </view>
           <CommonSwitch
             v-model="isWatering"
