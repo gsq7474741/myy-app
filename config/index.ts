@@ -116,6 +116,16 @@ export default defineConfig<"webpack5">(async (merge, { command, mode }) => {
           })
         );
         chain.resolve.plugin("tsconfig-paths").use(TsconfigPathsPlugin);
+        
+        // 添加STL文件支持
+        chain.module
+          .rule("stl")
+          .test(/\.stl$/)
+          .use("file-loader")
+          .loader(require.resolve("file-loader"))
+          .options({
+            name: "static/model/[name].[hash:8].[ext]",
+          });
       },
     },
     h5: {
@@ -163,6 +173,16 @@ export default defineConfig<"webpack5">(async (merge, { command, mode }) => {
           })
         );
         chain.resolve.plugin("tsconfig-paths").use(TsconfigPathsPlugin);
+        
+        // 添加STL文件支持
+        chain.module
+          .rule("stl")
+          .test(/\.stl$/)
+          .use("file-loader")
+          .loader(require.resolve("file-loader"))
+          .options({
+            name: "static/model/[name].[hash:8].[ext]",
+          });
       },
     },
     rn: {
