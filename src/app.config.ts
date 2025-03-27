@@ -11,7 +11,7 @@ export default {
     "pages/me/order/detail",
     "pages/me/card/list",
   ],
-  entryPagePath: "pages/me/index",
+  entryPagePath: "pages/courtyard/index-v2",
   window: {
     backgroundTextStyle: "light",
     navigationBarBackgroundColor: "#7CCF7F",

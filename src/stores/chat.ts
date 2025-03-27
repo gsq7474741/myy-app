@@ -95,5 +95,12 @@ export const useChatStore = defineStore("chat", () => {
     }
   };
 
-  return { messages, addMessage, push, sendable };
+  const clearMessages = () => {
+    messages.splice(0, messages.length);
+    conversationId.value = "";
+    lastMeMessageIndex.value = -1;
+    lastAiMessageIndex.value = -1;
+  };
+
+  return { messages, addMessage, push, sendable, clearMessages };
 });
