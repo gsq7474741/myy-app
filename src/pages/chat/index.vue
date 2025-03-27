@@ -1,5 +1,17 @@
 <template>
   <Layout>
+    <!-- 顶部标题栏和新对话按钮 -->
+    <view class="header-container px-4 py-3 flex justify-between items-center">
+      <view class="flex items-center">
+        <text class="text-xl font-bold">小树密语</text>
+      </view>
+      <view 
+        class="new-chat-btn shadow-md"
+        @click="startNewChat"
+      >
+        <text class="text-sm">新对话</text>
+      </view>
+    </view>
     <view
       :class="
         cn(
@@ -37,6 +49,12 @@ const chatStore = useChatStore();
 const appStore = useAppStore();
 const hasMessages = computed(() => chatStore.messages.length > 0);
 
+// 开始新对话的方法
+const startNewChat = () => {
+  chatStore.clearMessages();
+  Taro.showToast({ title: '已开始新对话', icon: 'success' });
+};
+
 watch(
   () => chatStore.messages,
   () => {
@@ -57,4 +75,21 @@ onMounted(() => {
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+.header-container {
+  width: 100%;
+  border-bottom: 1px solid #eee;
+  background-color: white;
+}
+
+.new-chat-btn {
+  background-color: var(--primary-color, #4CAF50);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+}
+</style>
