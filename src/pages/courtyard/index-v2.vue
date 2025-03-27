@@ -2,6 +2,7 @@
 import Taro from "@tarojs/taro";
 import Tree1Img from "@/assets/images/tree-1.png";
 import TreeLackWaterImg from "@/assets/images/tree-lack-water.png";
+import TreeModel from "@/components/garden/tree-model.vue";
 import Light1Img from "@/assets/images/light-1.png";
 import WaterOpen from "@/assets/images/water-open.png";
 import WaterClose from "@/assets/images/water-close.png";
@@ -49,7 +50,8 @@ const test = () => {
         @click="goToChat"
       ></GardenChatBtn>
       <view class="mt-[30px]">
-        <image :src="TreeLackWaterImg" class="size-auto"></image>
+        <!-- <image :src="TreeLackWaterImg" class="size-auto"></image> -->
+        <GardenTreeModel></GardenTreeModel>
       </view>
       <view class="bg-white/72 rounded-2xl px-2 py-1.75 w-full">
         <view class="w-full flex justify-between items-center mb-6 pt-1.5">
@@ -319,5 +321,18 @@ page {
     rgba(238, 246, 253, 0.52) 50%,
     rgba(246, 250, 253, 0.52) 100%
   );
+}
+.tree-container {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.tree-container canvas {
+  width: 100% !important;
+  height: 100% !important;
 }
 </style>

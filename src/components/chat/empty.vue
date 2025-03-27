@@ -1,8 +1,8 @@
 <template>
   <view class="flex flex-col items-center justify-center">
     <image :src="ChatLogoImg" class="size-15"></image>
-    <view class="text-lg font-bold text-center">嗨！我是小树</view>
-    <view class="text-center">探索无尽知识宝库, 每时每刻都精彩</view>
+    <view class="text-lg font-bold text-center">嗨！主人你好</view>
+    <view class="text-center">我是小树，你的虚拟树宠。有什么可以帮到主人的吗？</view>
   </view>
   <view class="mt-4">
     <view class="text-gray-400 mb-2">你可以这样问我</view>
@@ -27,8 +27,9 @@ const chatStore = useChatStore();
 // 预设的三个问题
 const presetQuestions = [
   "罗汉松应该怎么浇水？",
-  "我的树现在怎么样了？",
-  "我今天运势怎么样？"
+  "我的罗汉松现在怎么样了？",
+  "我今天运势怎么样？",
+  "给我讲讲周易"
 ];
 
 // 发送预设问题的函数
