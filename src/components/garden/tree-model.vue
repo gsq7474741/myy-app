@@ -74,6 +74,7 @@ const initThreeJS = () => {
   controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
   controls.dampingFactor = 0.25;
+  controls.enablePan = false; // 禁止平移视角，只允许旋转
   
   // 限制视角范围
   controls.minPolarAngle = Math.PI * 0.2; // 限制最小极角（防止视角太靠上）

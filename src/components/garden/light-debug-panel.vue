@@ -66,7 +66,7 @@ const sliderValues = {
     }
   },
   top: {
-    intensity: ref(mapToSlider(lights.top.intensity.value, 0, 5)),
+    intensity: ref(mapToSlider(lights.top.intensity.value, 0, 10)),
     position: {
       x: ref(mapToSlider(lights.top.position.x.value, -20, 20)),
       y: ref(mapToSlider(lights.top.position.y.value, -20, 20)),
@@ -88,7 +88,7 @@ const handleSlider = (event: any, lightType: 'ambient' | 'directional' | 'top', 
   } else if (property === 'intensity') {
     // 处理强度属性
     (slider as any)[property].value = sliderValue;
-    (light as any)[property].value = mapFromSlider(sliderValue, 0, 5);
+    (light as any)[property].value = mapFromSlider(sliderValue, 0, 10);
   }
   
   // 更新光源
