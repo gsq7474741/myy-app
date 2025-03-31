@@ -55,10 +55,10 @@ const mapFromSlider = (sliderValue: number, min: number, max: number): number =>
 // 滑动条值映射
 const sliderValues = {
   ambient: {
-    intensity: ref(mapToSlider(lights.ambient.intensity.value, 0, 5))
+    intensity: ref(mapToSlider(lights.ambient.intensity.value, 0, 10))
   },
   directional: {
-    intensity: ref(mapToSlider(lights.directional.intensity.value, 0, 5)),
+    intensity: ref(mapToSlider(lights.directional.intensity.value, 0, 10)),
     position: {
       x: ref(mapToSlider(lights.directional.position.x.value, -20, 20)),
       y: ref(mapToSlider(lights.directional.position.y.value, -20, 20)),

@@ -39,6 +39,7 @@ let animationFrameId: number;
 let mixer: THREE.AnimationMixer | null = null; // 动画混合器
 let animations: THREE.AnimationClip[] = []; // 存储动画片段
 let clock = new THREE.Clock(); // 用于动画计时
+let lightContainer: THREE.Group; // 光源容器
 
 // 光源引用
 const ambientLightRef = ref<THREE.AmbientLight | null>(null);
@@ -82,22 +83,27 @@ const initThreeJS = () => {
   controls.minDistance = 6; // 最小缩放距离
   controls.maxDistance = 15; // 最大缩放距离
   
+  // 创建光源容器，附加到相机上
+  lightContainer = new THREE.Group();
+  camera.add(lightContainer);
+  scene.add(camera); // 需要将相机添加到场景中才能使其子对象可见
+  
   // 添加光源
   const ambientLight = new THREE.AmbientLight(0xffffff, 2);
-  scene.add(ambientLight);
+  scene.add(ambientLight); // 环境光直接添加到场景
   ambientLightRef.value = ambientLight;
   
   const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-  directionalLight.position.set(8, 2, 5);
+  directionalLight.position.set(0, 0, 1); // 相对于相机的位置
   directionalLightRef.value = directionalLight;
-  scene.add(directionalLight);
+  lightContainer.add(directionalLight); // 方向光添加到光源容器
   
   // 添加顶光
   const topLight = new THREE.DirectionalLight(0xffffff, 1);
-  topLight.position.set(8, 2, 5); // 从正上方照射
+  topLight.position.set(0, 1, 0); // 从正上方照射，相对于相机
   topLight.castShadow = true; // 启用阴影
   topLightRef.value = topLight;
-  scene.add(topLight);
+  lightContainer.add(topLight); // 顶光添加到光源容器
   
   // 根据modelType加载不同类型的模型
   loadModel(props.modelType);
@@ -244,27 +250,31 @@ const updateAmbientLight = (lightData) => {
   }
 };
 
-const updateDirectionalLight = (lightData) => {
+const updateDirectionalLight = (lightData: any) => {
   if (directionalLightRef.value) {
     directionalLightRef.value.intensity = lightData.intensity;
     directionalLightRef.value.color.set(lightData.color);
-    directionalLightRef.value.position.set(
-      lightData.position.x,
-      lightData.position.y,
-      lightData.position.z
-    );
+    if (lightData.position) {
+      directionalLightRef.value.position.set(
+        lightData.position.x,
+        lightData.position.y,
+        lightData.position.z
+      );
+    }
   }
 };
 
-const updateTopLight = (lightData) => {
+const updateTopLight = (lightData: any) => {
   if (topLightRef.value) {
     topLightRef.value.intensity = lightData.intensity;
     topLightRef.value.color.set(lightData.color);
-    topLightRef.value.position.set(
-      lightData.position.x,
-      lightData.position.y,
-      lightData.position.z
-    );
+    if (lightData.position) {
+      topLightRef.value.position.set(
+        lightData.position.x,
+        lightData.position.y,
+        lightData.position.z
+      );
+    }
   }
 };
 
