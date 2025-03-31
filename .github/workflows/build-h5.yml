@@ -4,8 +4,8 @@
 name: Build h5
 
 on:
-  pull_request:
-    branches: [ "develop" ]
+  workflow_dispatch:
+  
 
 jobs:
   setup:

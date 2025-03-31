@@ -1,8 +1,5 @@
 <script lang="ts" setup>
 import Taro from "@tarojs/taro";
-import Tree1Img from "@/assets/images/tree-1.png";
-import TreeLackWaterImg from "@/assets/images/tree-lack-water.png";
-import TreeModel from "@/components/garden/tree-model.vue";
 import Light1Img from "@/assets/images/light-1.png";
 import WaterOpen from "@/assets/images/water-open.png";
 import WaterClose from "@/assets/images/water-close.png";
