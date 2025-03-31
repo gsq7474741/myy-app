@@ -48,7 +48,7 @@ const test = () => {
       ></GardenChatBtn>
       <view class="mt-[30px]">
         <!-- <image :src="TreeLackWaterImg" class="size-auto"></image> -->
-        <GardenTreeModel></GardenTreeModel>
+        <GardenTreeModel :debug="true"></GardenTreeModel>
       </view>
       <view class="bg-white/72 rounded-2xl px-2 py-1.75 w-full">
         <view class="w-full flex justify-between items-center mb-6 pt-1.5">

@@ -3,6 +3,7 @@ import { onMounted, onUnmounted, ref, watch } from 'vue';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import LightDebugPanel from './light-debug-panel.vue';
 
 // 导入模型文件
 import TreeModelNormGLB from '@/assets/models/norm/norm.glb';
@@ -20,6 +21,10 @@ const props = defineProps({
   animationSpeed: {
     type: Number,
     default: 1 // 动画速度倍率，1.0为正常速度
+  },
+  debug: {
+    type: Boolean,
+    default: false // 是否显示调试面板
   }
 });
 
@@ -35,6 +40,11 @@ let mixer: THREE.AnimationMixer | null = null; // 动画混合器
 let animations: THREE.AnimationClip[] = []; // 存储动画片段
 let clock = new THREE.Clock(); // 用于动画计时
 
+// 光源引用
+const ambientLightRef = ref<THREE.AmbientLight | null>(null);
+const directionalLightRef = ref<THREE.DirectionalLight | null>(null);
+const topLightRef = ref<THREE.DirectionalLight | null>(null);
+
 // 初始化Three.js场景
 const initThreeJS = () => {
   if (!treeContainer.value) return;
@@ -44,9 +54,10 @@ const initThreeJS = () => {
   scene.background = null; // 透明背景
   
   // 创建相机
-  camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+  camera = new THREE.PerspectiveCamera(50, 1, 0.1, 2000);
+  camera.position.x = 8;
+  camera.position.y = 2; // 将相机位置从2上移到4
   camera.position.z = 5;
-  camera.position.y = 3.5; // 将相机位置从2上移到4
   
   // 创建渲染器
   renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -63,18 +74,29 @@ const initThreeJS = () => {
   controls.enableDamping = true;
   controls.dampingFactor = 0.25;
   
+  // 限制视角范围
+  controls.minPolarAngle = Math.PI * 0.2; // 限制最小极角（防止视角太靠上）
+  controls.maxPolarAngle = Math.PI * 0.5; // 限制最大极角（防止视角太靠下）
+  
+  // 限制缩放范围
+  controls.minDistance = 6; // 最小缩放距离
+  controls.maxDistance = 15; // 最大缩放距离
+  
   // 添加光源
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+  const ambientLight = new THREE.AmbientLight(0xffffff, 2);
   scene.add(ambientLight);
+  ambientLightRef.value = ambientLight;
   
   const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-  directionalLight.position.set(1, 1, 1);
+  directionalLight.position.set(8, 2, 5);
+  directionalLightRef.value = directionalLight;
   scene.add(directionalLight);
   
   // 添加顶光
-  const topLight = new THREE.DirectionalLight(0xffffff, 0.8);
-  topLight.position.set(0, 10, 0); // 从正上方照射
+  const topLight = new THREE.DirectionalLight(0xffffff, 1);
+  topLight.position.set(8, 2, 5); // 从正上方照射
   topLight.castShadow = true; // 启用阴影
+  topLightRef.value = topLight;
   scene.add(topLight);
   
   // 根据modelType加载不同类型的模型
@@ -135,7 +157,7 @@ const loadGLBModel = () => {
 const loadGLTFModel = () => {
   const loader = new GLTFLoader();
   
-  loader.load(TreeModelNormGLTF, (gltf) => {
+  loader.load(TreeModelNormGLB, (gltf) => {
     treeModel = gltf.scene;
     
     // 调整模型位置和大小
@@ -214,6 +236,38 @@ watch(() => props.modelType, (newValue) => {
   loadModel(newValue);
 });
 
+// 处理光源更新
+const updateAmbientLight = (lightData) => {
+  if (ambientLightRef.value) {
+    ambientLightRef.value.intensity = lightData.intensity;
+    ambientLightRef.value.color.set(lightData.color);
+  }
+};
+
+const updateDirectionalLight = (lightData) => {
+  if (directionalLightRef.value) {
+    directionalLightRef.value.intensity = lightData.intensity;
+    directionalLightRef.value.color.set(lightData.color);
+    directionalLightRef.value.position.set(
+      lightData.position.x,
+      lightData.position.y,
+      lightData.position.z
+    );
+  }
+};
+
+const updateTopLight = (lightData) => {
+  if (topLightRef.value) {
+    topLightRef.value.intensity = lightData.intensity;
+    topLightRef.value.color.set(lightData.color);
+    topLightRef.value.position.set(
+      lightData.position.x,
+      lightData.position.y,
+      lightData.position.z
+    );
+  }
+};
+
 onMounted(() => {
   initThreeJS();
   window.addEventListener('resize', handleResize);
@@ -245,7 +299,17 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="tree-model-container" ref="treeContainer"></div>
+  <div class="tree-model-container" ref="treeContainer">
+    <light-debug-panel 
+      v-if="props.debug && ambientLightRef && directionalLightRef && topLightRef"
+      :ambient-light="ambientLightRef"
+      :directional-light="directionalLightRef"
+      :top-light="topLightRef"
+      @update:ambient-light="updateAmbientLight"
+      @update:directional-light="updateDirectionalLight"
+      @update:top-light="updateTopLight"
+    />
+  </div>
 </template>
 
 <style scoped>
@@ -253,6 +317,7 @@ onUnmounted(() => {
   width: 350px;
   height: 350px;
   margin: 0 auto;
+  position: relative;
 }
 
 .tree-model-container canvas {
