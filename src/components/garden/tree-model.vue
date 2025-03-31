@@ -6,7 +6,6 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 // 导入模型文件
 import TreeModelNormGLB from '@/assets/models/norm/norm.glb';
-import TreeModelNormGLTF from '@/assets/models/norm/norm.gltf';
 // 注意：bin文件会由GLTFLoader自动加载，不需要显式导入
 
 const props = defineProps({
