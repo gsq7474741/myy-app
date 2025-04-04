@@ -70,6 +70,13 @@ jobs:
         comment-author: 'github-actions[bot]'
         body-includes: "预览环境部署已完成"
     
+    # 获取中国时间
+    - name: Get China Time
+      id: china-time
+      run: |
+        # 使用TZ环境变量设置时区为中国时区
+        TZ='Asia/Shanghai' echo "CHINA_TIME=$(date '+%Y-%m-%d %H:%M:%S %z')" >> $GITHUB_OUTPUT
+    
     # 创建或更新PR评论
     - name: Create or Update Comment
       uses: peter-evans/create-or-update-comment@v3
@@ -83,6 +90,6 @@ jobs:
           
           🔗 [点击访问预览网站](${{ vars.PREVIEW_URL }})
           
-          部署时间：${{ github.event.pull_request.updated_at }}
+          部署时间：${{ steps.china-time.outputs.CHINA_TIME }}
           提交哈希：${{ github.sha }}
         edit-mode: replace
