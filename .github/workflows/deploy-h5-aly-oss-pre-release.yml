@@ -59,8 +59,8 @@ jobs:
       run: |
         npx tsx upload.ts
         # 设置预览URL作为输出变量
-        echo "PREVIEW_URL=https://${{ vars.PAGE_OSS_BUCKET }}.${{ vars.PAGE_OSS_REGION }}.aliyuncs.com/${{ vars.PAGE_OSS_PATH }}/" >> $GITHUB_ENV
-    
+        echo "PREVIEW_URL=${{ env.PREVIEW_URL }}"
+        
     # 在PR中查找并更新或创建评论
     - name: Find Comment
       uses: peter-evans/find-comment@v2
