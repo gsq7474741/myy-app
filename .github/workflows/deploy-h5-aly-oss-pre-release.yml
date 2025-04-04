@@ -59,7 +59,7 @@ jobs:
       run: |
         npx tsx upload.ts
         # 设置预览URL作为输出变量
-        echo "PREVIEW_URL=${{ env.PREVIEW_URL }}"
+        echo "PREVIEW_URL=${{ vars.PREVIEW_URL }}"
         
     # 在PR中查找并更新或创建评论
     - name: Find Comment
@@ -81,7 +81,7 @@ jobs:
           
           您可以在以下地址预览这个 PR 的最新变更：
           
-          🔗 [点击访问预览网站](${{ env.PREVIEW_URL }})
+          🔗 [点击访问预览网站](${{ vars.PREVIEW_URL }})
           
           部署时间：${{ github.event.pull_request.updated_at }}
           提交哈希：${{ github.sha }}
