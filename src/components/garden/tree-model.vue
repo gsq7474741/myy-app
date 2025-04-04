@@ -46,6 +46,15 @@ const ambientLightRef = ref<THREE.AmbientLight | null>(null);
 const directionalLightRef = ref<THREE.DirectionalLight | null>(null);
 const topLightRef = ref<THREE.DirectionalLight | null>(null);
 
+// 材质属性引用
+const materialRef = ref<{
+  metalness: number;
+  roughness: number;
+}>({
+  metalness: 0.01, // 默认金属度
+  roughness: 0.99  // 默认粗糙度
+});
+
 // 初始化Three.js场景
 const initThreeJS = () => {
   if (!treeContainer.value) return;
@@ -66,6 +75,9 @@ const initThreeJS = () => {
   const containerHeight = treeContainer.value.clientHeight;
   renderer.setSize(containerWidth, containerHeight); // 使用容器的实际尺寸
   renderer.setClearColor(0x000000, 0); // 透明背景
+  renderer.outputColorSpace = THREE.SRGBColorSpace; // 使用sRGB色彩空间
+  renderer.toneMapping = THREE.ACESFilmicToneMapping; // 使用ACES电影色调映射
+  renderer.toneMappingExposure = 2.0; // 设置曝光度
   
   // 添加渲染器到DOM
   treeContainer.value.appendChild(renderer.domElement);
@@ -90,17 +102,17 @@ const initThreeJS = () => {
   scene.add(camera); // 需要将相机添加到场景中才能使其子对象可见
   
   // 添加光源
-  const ambientLight = new THREE.AmbientLight(0xffffff, 2);
+  const ambientLight = new THREE.AmbientLight(0xffffff, 1.2); // 降低环境光强度
   scene.add(ambientLight); // 环境光直接添加到场景
   ambientLightRef.value = ambientLight;
   
-  const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-  directionalLight.position.set(0, 0, 1); // 相对于相机的位置
+  const directionalLight = new THREE.DirectionalLight(0xffffff, 2); // 增加方向光强度
+  directionalLight.position.set(7.2,18,-2.8); // 调整方向光位置，使光照更自然
   directionalLightRef.value = directionalLight;
   lightContainer.add(directionalLight); // 方向光添加到光源容器
   
   // 添加顶光
-  const topLight = new THREE.DirectionalLight(0xffffff, 1);
+  const topLight = new THREE.DirectionalLight(0xffffff, 0.8); // 调整顶光强度
   topLight.position.set(0, 1, 0); // 从正上方照射，相对于相机
   topLight.castShadow = true; // 启用阴影
   topLightRef.value = topLight;
@@ -138,6 +150,33 @@ const loadGLBModel = () => {
     treeModel.scale.set(1, 0.95, 1);
     treeModel.position.y = -1.5;
     
+    // 处理材质，确保正确的颜色空间
+    treeModel.traverse((node) => {
+      if ((node as THREE.Mesh).isMesh) {
+        const mesh = node as THREE.Mesh;
+        // 设置材质的颜色空间
+        if (mesh.material) {
+          const material = mesh.material as THREE.Material;
+          material.needsUpdate = true;
+          
+          // 注意：在Three.js 0.174.0中，材质不直接支持colorSpace属性
+          // 我们通过设置渲染器的输出颜色空间来处理
+          
+          // 如果是标准材质，调整其属性以更接近Blender效果
+          if (material.type === 'MeshStandardMaterial') {
+            const stdMaterial = material as THREE.MeshStandardMaterial;
+            stdMaterial.metalness = Math.min(stdMaterial.metalness, materialRef.value.metalness); // 降低金属度
+            stdMaterial.roughness = Math.max(stdMaterial.roughness, materialRef.value.roughness); // 确保一定的粗糙度
+            stdMaterial.envMapIntensity = 1.0; // 环境贴图强度
+          }
+          
+          // 启用阴影
+          mesh.castShadow = true;
+          mesh.receiveShadow = true;
+        }
+      }
+    });
+    
     // 处理动画
     if (gltf.animations && gltf.animations.length > 0) {
       animations = gltf.animations;
@@ -170,6 +209,33 @@ const loadGLTFModel = () => {
     // 调整模型位置和大小
     treeModel.scale.set(0.2, 0.2, 0.2);
     treeModel.position.y = -1.5;
+    
+    // 处理材质，确保正确的颜色空间
+    treeModel.traverse((node) => {
+      if ((node as THREE.Mesh).isMesh) {
+        const mesh = node as THREE.Mesh;
+        // 设置材质的颜色空间
+        if (mesh.material) {
+          const material = mesh.material as THREE.Material;
+          material.needsUpdate = true;
+          
+          // 注意：在Three.js 0.174.0中，材质不直接支持colorSpace属性
+          // 我们通过设置渲染器的输出颜色空间来处理
+          
+          // 如果是标准材质，调整其属性以更接近Blender效果
+          if (material.type === 'MeshStandardMaterial') {
+            const stdMaterial = material as THREE.MeshStandardMaterial;
+            stdMaterial.metalness = Math.min(stdMaterial.metalness, materialRef.value.metalness); // 降低金属度
+            stdMaterial.roughness = Math.max(stdMaterial.roughness, materialRef.value.roughness); // 确保一定的粗糙度
+            stdMaterial.envMapIntensity = 1.0; // 环境贴图强度
+          }
+          
+          // 启用阴影
+          mesh.castShadow = true;
+          mesh.receiveShadow = true;
+        }
+      }
+    });
     
     // 处理动画
     if (gltf.animations && gltf.animations.length > 0) {
@@ -243,6 +309,25 @@ watch(() => props.modelType, (newValue) => {
   loadModel(newValue);
 });
 
+// 监听materialRef变化，更新材质属性
+watch(() => materialRef.value, (newValue) => {
+  if (treeModel) {
+    treeModel.traverse((node) => {
+      if ((node as THREE.Mesh).isMesh) {
+        const mesh = node as THREE.Mesh;
+        if (mesh.material) {
+          const material = mesh.material as THREE.Material;
+          if (material.type === 'MeshStandardMaterial') {
+            const stdMaterial = material as THREE.MeshStandardMaterial;
+            stdMaterial.metalness = Math.min(stdMaterial.metalness, newValue.metalness); // 降低金属度
+            stdMaterial.roughness = Math.max(stdMaterial.roughness, newValue.roughness); // 确保一定的粗糙度
+          }
+        }
+      }
+    });
+  }
+});
+
 // 处理光源更新
 const updateAmbientLight = (lightData) => {
   if (ambientLightRef.value) {
@@ -251,32 +336,34 @@ const updateAmbientLight = (lightData) => {
   }
 };
 
-const updateDirectionalLight = (lightData: any) => {
+const updateDirectionalLight = (lightData) => {
   if (directionalLightRef.value) {
     directionalLightRef.value.intensity = lightData.intensity;
     directionalLightRef.value.color.set(lightData.color);
-    if (lightData.position) {
-      directionalLightRef.value.position.set(
-        lightData.position.x,
-        lightData.position.y,
-        lightData.position.z
-      );
-    }
+    directionalLightRef.value.position.set(
+      lightData.position.x,
+      lightData.position.y,
+      lightData.position.z
+    );
   }
 };
 
-const updateTopLight = (lightData: any) => {
+const updateTopLight = (lightData) => {
   if (topLightRef.value) {
     topLightRef.value.intensity = lightData.intensity;
     topLightRef.value.color.set(lightData.color);
-    if (lightData.position) {
-      topLightRef.value.position.set(
-        lightData.position.x,
-        lightData.position.y,
-        lightData.position.z
-      );
-    }
+    topLightRef.value.position.set(
+      lightData.position.x,
+      lightData.position.y,
+      lightData.position.z
+    );
   }
+};
+
+// 更新材质属性
+const updateMaterial = (materialData) => {
+  materialRef.value.metalness = materialData.metalness;
+  materialRef.value.roughness = materialData.roughness;
 };
 
 onMounted(() => {
@@ -311,14 +398,17 @@ onUnmounted(() => {
 
 <template>
   <div class="tree-model-container" ref="treeContainer">
-    <light-debug-panel 
+    <LightDebugPanel 
       v-if="props.debug && ambientLightRef && directionalLightRef && topLightRef"
       :ambient-light="ambientLightRef"
       :directional-light="directionalLightRef"
       :top-light="topLightRef"
+      :material="materialRef"
       @update:ambient-light="updateAmbientLight"
       @update:directional-light="updateDirectionalLight"
       @update:top-light="updateTopLight"
+      @update:material="updateMaterial"
+      class="model-debug-panel"
     />
   </div>
 </template>
@@ -335,5 +425,13 @@ onUnmounted(() => {
   width: 100% !important;
   height: 100% !important;
   display: block;
+}
+
+/* 调试面板样式 */
+.model-debug-panel {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 100;
 }
 </style>

@@ -8,13 +8,28 @@ interface LightProps {
   position?: THREE.Vector3;
 }
 
+// 定义材质属性接口并使用它
+interface MaterialProps {
+  metalness: number;
+  roughness: number;
+}
+
 const props = defineProps({
   ambientLight: { type: Object, required: true },
   directionalLight: { type: Object, required: true },
-  topLight: { type: Object, required: true }
+  topLight: { type: Object, required: true },
+  material: { 
+    type: Object as () => MaterialProps, 
+    default: () => ({ metalness: 0.1, roughness: 0.9 }) 
+  }
 });
 
-const emit = defineEmits(['update:ambientLight', 'update:directionalLight', 'update:topLight']);
+const emit = defineEmits([
+  'update:ambientLight', 
+  'update:directionalLight', 
+  'update:topLight',
+  'update:material'
+]);
 
 // 光源参数
 const lights = {
@@ -41,6 +56,12 @@ const lights = {
       z: ref(props.topLight.position.z)
     }
   }
+};
+
+// 材质参数
+const material = {
+  metalness: ref(props.material.metalness),
+  roughness: ref(props.material.roughness)
 };
 
 // 映射函数
@@ -72,12 +93,25 @@ const sliderValues = {
       y: ref(mapToSlider(lights.top.position.y.value, -20, 20)),
       z: ref(mapToSlider(lights.top.position.z.value, -20, 20))
     }
+  },
+  material: {
+    metalness: ref(mapToSlider(material.metalness.value, 0, 1)),
+    roughness: ref(mapToSlider(material.roughness.value, 0, 1))
   }
 };
 
 // 处理滑动条输入
-const handleSlider = (event: any, lightType: 'ambient' | 'directional' | 'top', property: string, subProperty?: string) => {
+const handleSlider = (event: any, lightType: 'ambient' | 'directional' | 'top' | 'material', property: string, subProperty?: string) => {
   const sliderValue = event.detail.value;
+  
+  if (lightType === 'material') {
+    // 处理材质属性
+    (sliderValues.material as any)[property].value = sliderValue;
+    (material as any)[property].value = mapFromSlider(sliderValue, 0, 1);
+    updateMaterial();
+    return;
+  }
+  
   const light = lights[lightType];
   const slider = sliderValues[lightType];
   
@@ -127,6 +161,14 @@ const updateLight = (lightType: 'ambient' | 'directional' | 'top') => {
   }
 };
 
+// 更新材质
+const updateMaterial = () => {
+  emit('update:material', {
+    metalness: material.metalness.value,
+    roughness: material.roughness.value
+  });
+};
+
 // 颜色选择器引用
 const colorInputRefs = {
   ambient: ref<HTMLInputElement | null>(null),
@@ -156,9 +198,9 @@ const togglePanel = () => {
 
 <template>
   <div class="light-debug-panel">
-    <button class="toggle-btn" @click="togglePanel">
-      {{ showPanel ? '隐藏调试面板' : '显示调试面板' }}
-    </button>
+    <div class="toggle-btn" @click="togglePanel">
+      <div class="toggle-icon">💡</div>
+    </div>
     
     <div v-if="showPanel" class="panel-content">
       <!-- 环境光 -->
@@ -305,6 +347,35 @@ const togglePanel = () => {
           </div>
         </template>
       </div>
+      
+      <!-- 材质 -->
+      <div class="light-section">
+        <h3>材质</h3>
+        <div class="control-group">
+          <label>金属度:</label>
+          <slider
+            min="0" max="100" step="1"
+            :value="sliderValues.material.metalness"
+            @changing="(e) => handleSlider(e, 'material', 'metalness')"
+            block-size="20"
+            activeColor="#4CAF50"
+            backgroundColor="#d3d3d3"
+          />
+          <span>{{ material.metalness.value.toFixed(2) }}</span>
+        </div>
+        <div class="control-group">
+          <label>粗糙度:</label>
+          <slider
+            min="0" max="100" step="1"
+            :value="sliderValues.material.roughness"
+            @changing="(e) => handleSlider(e, 'material', 'roughness')"
+            block-size="20"
+            activeColor="#4CAF50"
+            backgroundColor="#d3d3d3"
+          />
+          <span>{{ material.roughness.value.toFixed(2) }}</span>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -314,26 +385,36 @@ const togglePanel = () => {
   position: absolute;
   top: 10px;
   right: 10px;
-  width: 300px;
   z-index: 1000;
 }
 
 .toggle-btn {
-  width: 100%;
-  padding: 8px;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 4px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   cursor: pointer;
 }
 
+.toggle-icon {
+  font-size: 18px;
+}
+
 .panel-content {
-  margin-top: 10px;
+  position: absolute;
+  top: 45px;
+  right: 0;
+  width: 300px;
   padding: 15px;
-  background-color: rgba(255, 255, 255, 0.5);
-  border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  background-color: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(2px);
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   max-height: 80vh;
   overflow-y: auto;
 }

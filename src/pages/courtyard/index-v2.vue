@@ -5,6 +5,11 @@ import WaterOpen from "@/assets/images/water-open.png";
 import WaterClose from "@/assets/images/water-close.png";
 import { storeToRefs } from "pinia";
 import { formatPH } from "../../utils/format";
+import { ref, computed } from "vue";
+
+// 是否处于调试模式
+const isDebugModeSeasonBg = ref(true);
+const isDebugModeTreeModel = ref(true);
 
 const appStore = useAppStore();
 const courtyardStore = useCourtyardStore();
@@ -30,25 +35,86 @@ const goToChat = () => {
 const test = () => {
   Taro.navigateTo({ url: "/pages/courtyard/camera" });
 };
+
+// 获取当前季节
+const getCurrentSeason = () => {
+  const now = new Date();
+  const month = now.getMonth() + 1; // 月份从0开始，所以+1
+  
+  if (month >= 3 && month <= 5) return 'spring'; // 春季：3-5月
+  if (month >= 6 && month <= 8) return 'summer'; // 夏季：6-8月
+  if (month >= 9 && month <= 11) return 'autumn'; // 秋季：9-11月
+  return 'winter'; // 冬季：12-2月
+};
+
+// 季节列表
+const seasons = ['spring', 'summer', 'autumn', 'winter'];
+const seasonNames = {
+  spring: '春季',
+  summer: '夏季',
+  autumn: '秋季',
+  winter: '冬季'
+};
+
+const currentSeason = ref(getCurrentSeason());
+const showSeasonDebug = ref(false); // 控制调试面板显示
+
+// 切换季节
+const changeSeason = (season) => {
+  currentSeason.value = season;
+};
+
+// 切换调试面板显示
+const toggleSeasonDebug = () => {
+  showSeasonDebug.value = !showSeasonDebug.value;
+};
+
+// 根据季节计算背景样式类
+const seasonBgClass = computed(() => {
+  return `season-bg-${currentSeason.value}`;
+});
 </script>
 <template>
-  <view class="main-content relative size-full pt-[56px]">
+  <view class="main-content size-full">
+    <!-- 季节背景层，覆盖标题栏 -->
+    <view :class="['seasonal-background-full', seasonBgClass]"></view>
+    
     <CommonNavbar
-      with-auto-background
-      with-auto-foreground
-      with-auto-shadow
       :show-back="false"
+      class="z-10 relative"
     ></CommonNavbar>
-    <view class="relative px-2 size-full flex flex-col items-center gap-4">
+    <view class="relative px-2 size-full flex flex-col items-center gap-4 pt-[56px]">
+      <!-- 树模型区域的季节背景层不再需要 -->
+      <!-- <view :class="['seasonal-background', seasonBgClass]"></view> -->
+      
+      <!-- 季节调试按钮，只在调试模式下显示 -->
+      <view v-if="isDebugModeSeasonBg" class="season-debug-toggle" @click="toggleSeasonDebug">
+        <view class="season-debug-icon">🌍</view>
+      </view>
+      
+      <!-- 季节切换面板，只在调试模式下显示 -->
+      <view v-if="isDebugModeSeasonBg && showSeasonDebug" class="season-debug-panel">
+        <view class="season-debug-title">季节切换</view>
+        <view class="season-debug-buttons">
+          <view 
+            v-for="season in seasons" 
+            :key="season"
+            :class="['season-button', currentSeason === season ? 'active' : '']"
+            @click="changeSeason(season)"
+          >
+            {{ seasonNames[season] }}
+          </view>
+        </view>
+      </view>
+      
       <GardenFloatStatus class="absolute top-3 left-4"></GardenFloatStatus>
       <view></view>
       <GardenChatBtn
         class="absolute top-3 right-4"
         @click="goToChat"
       ></GardenChatBtn>
-      <view class="mt-[30px]">
-        <!-- <image :src="TreeLackWaterImg" class="size-auto"></image> -->
-        <GardenTreeModel :debug="true"></GardenTreeModel>
+      <view class="mt-[30px] relative">
+        <GardenTreeModel :debug="isDebugModeTreeModel"></GardenTreeModel>
       </view>
       <view class="bg-white/72 rounded-2xl px-2 py-1.75 w-full">
         <view class="w-full flex justify-between items-center mb-6 pt-1.5">
@@ -285,6 +351,222 @@ const test = () => {
 page {
   height: 100vh;
   background-color: #f5f5f5;
+}
+
+// 季节调试按钮样式
+.season-debug-toggle {
+  position: absolute;
+  top: 70px;
+  right: 15px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+
+.season-debug-icon {
+  font-size: 20px;
+}
+
+// 季节切换面板
+.season-debug-panel {
+  position: absolute;
+  top: 115px;
+  right: 15px;
+  width: 120px;
+  background-color: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 10px;
+  padding: 10px;
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.season-debug-title {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  text-align: center;
+  color: #333;
+}
+
+.season-debug-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.season-button {
+  padding: 6px 0;
+  border-radius: 6px;
+  text-align: center;
+  font-size: 14px;
+  background-color: rgba(240, 240, 240, 0.8);
+  transition: all 0.2s ease;
+  
+  &:active {
+    transform: scale(0.98);
+  }
+  
+  &.active {
+    background-color: #4CAF50;
+    color: white;
+  }
+}
+
+// 季节背景样式 - 全屏包括标题栏
+.seasonal-background-full {
+  position: fixed; // 使用fixed而不是absolute来确保覆盖标题栏
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 512px; // 56px标题栏 + 400px树区域
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none; // 确保不影响交互
+}
+
+// 春季背景 - 淡绿色渐变，花瓣飘落效果
+.season-bg-spring {
+  background: linear-gradient(
+    180deg,
+    rgba(220, 255, 220, 0.6) 0%,
+    rgba(240, 255, 240, 0.4) 100%
+  );
+  &::before, &::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-image: 
+      radial-gradient(circle at 20% 30%, #ffcce5 4px, transparent 4px),
+      radial-gradient(circle at 70% 60%, #ffcce5 3px, transparent 3px),
+      radial-gradient(circle at 40% 80%, #ffcce5 5px, transparent 5px),
+      radial-gradient(circle at 85% 15%, #ffcce5 2px, transparent 2px),
+      radial-gradient(circle at 60% 40%, #ffcce5 3px, transparent 3px);
+    background-size: 300px 300px;
+    animation: floatPetals 60s linear infinite;
+    opacity: 0.5;
+  }
+  &::after {
+    background-position: 150px 150px;
+    animation-duration: 90s;
+    opacity: 0.3;
+  }
+}
+
+// 夏季背景 - 蓝色渐变，阳光效果
+.season-bg-summer {
+  background: linear-gradient(
+    180deg,
+    rgba(200, 240, 255, 0.6) 0%,
+    rgba(230, 250, 255, 0.4) 100%
+  );
+  &::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-image: 
+      radial-gradient(circle at 20% 20%, rgba(255, 255, 200, 0.8) 10px, transparent 40px),
+      radial-gradient(circle at 80% 30%, rgba(255, 255, 200, 0.7) 15px, transparent 50px);
+    animation: summerSun 30s ease-in-out infinite alternate;
+  }
+}
+
+// 秋季背景 - 橙色渐变，落叶效果
+.season-bg-autumn {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 230, 200, 0.6) 0%,
+    rgba(255, 245, 230, 0.4) 100%
+  );
+  &::before, &::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-image: 
+      radial-gradient(ellipse at 30% 40%, #e9a16c 5px, transparent 5px),
+      radial-gradient(ellipse at 70% 70%, #d9814c 6px, transparent 6px),
+      radial-gradient(ellipse at 50% 20%, #c97a4c 4px, transparent 4px),
+      radial-gradient(ellipse at 20% 80%, #e9a16c 5px, transparent 5px),
+      radial-gradient(ellipse at 90% 30%, #d9814c 6px, transparent 6px);
+    background-size: 300px 300px;
+    animation: fallingLeaves 40s linear infinite;
+    opacity: 0.6;
+  }
+  &::after {
+    background-position: 150px 150px;
+    animation-duration: 60s;
+    opacity: 0.4;
+  }
+}
+
+// 冬季背景 - 蓝白渐变，雪花效果
+.season-bg-winter {
+  background: linear-gradient(
+    180deg,
+    rgba(230, 240, 255, 0.6) 0%,
+    rgba(245, 250, 255, 0.4) 100%
+  );
+  &::before, &::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-image: 
+      radial-gradient(circle at 20% 30%, white 2px, transparent 2px),
+      radial-gradient(circle at 70% 60%, white 1px, transparent 1px),
+      radial-gradient(circle at 40% 80%, white 3px, transparent 3px),
+      radial-gradient(circle at 85% 15%, white 1px, transparent 1px),
+      radial-gradient(circle at 60% 40%, white 2px, transparent 2px);
+    background-size: 200px 200px;
+    animation: snowfall 30s linear infinite;
+    opacity: 0.7;
+  }
+  &::after {
+    background-position: 100px 100px;
+    animation-duration: 45s;
+    opacity: 0.5;
+  }
+}
+
+// 动画定义
+@keyframes floatPetals {
+  from { background-position: 0 0; }
+  to { background-position: 300px 300px; }
+}
+
+@keyframes summerSun {
+  0% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.1); }
+  100% { opacity: 0.5; transform: scale(1); }
+}
+
+@keyframes fallingLeaves {
+  from { background-position: 0 -100px; }
+  to { background-position: 300px 500px; }
+}
+
+@keyframes snowfall {
+  from { background-position: 0 0; }
+  to { background-position: 200px 400px; }
 }
 
 .card-1 {
