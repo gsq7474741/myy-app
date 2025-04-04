@@ -43,10 +43,40 @@ jobs:
 
     # 上传到阿里云 OSS
     - name: Upload to aly OSS
+      id: upload-oss
       env:
         ALIBABA_CLOUD_ACCESS_KEY_ID: ${{ secrets.ALIBABA_CLOUD_ACCESS_KEY_ID }}
         ALIBABA_CLOUD_ACCESS_KEY_SECRET: ${{ secrets.ALIBABA_CLOUD_ACCESS_KEY_SECRET }}
         PAGE_OSS_BUCKET: ${{ vars.PAGE_OSS_BUCKET }}
         PAGE_OSS_REGION: ${{ vars.PAGE_OSS_REGION }}
         PAGE_OSS_PATH: ${{ vars.PAGE_OSS_PATH }}
-      run: npx tsx upload.ts
+      run: |
+        npx tsx upload.ts
+        # 设置预览URL作为输出变量
+        echo "PREVIEW_URL=https://${{ vars.PAGE_OSS_BUCKET }}.${{ vars.PAGE_OSS_REGION }}.aliyuncs.com/${{ vars.PAGE_OSS_PATH }}/" >> $GITHUB_ENV
+    
+    # 在PR中查找并更新或创建评论
+    - name: Find Comment
+      uses: peter-evans/find-comment@v2
+      id: find-comment
+      with:
+        issue-number: ${{ github.event.pull_request.number }}
+        comment-author: 'github-actions[bot]'
+        body-includes: "预览环境部署已完成"
+    
+    # 创建或更新PR评论
+    - name: Create or Update Comment
+      uses: peter-evans/create-or-update-comment@v3
+      with:
+        comment-id: ${{ steps.find-comment.outputs.comment-id }}
+        issue-number: ${{ github.event.pull_request.number }}
+        body: |
+          ### 预览环境部署已完成 🚀
+          
+          您可以在以下地址预览这个 PR 的最新变更：
+          
+          🔗 [点击访问预览网站](${{ env.PREVIEW_URL }})
+          
+          部署时间：${{ github.event.pull_request.updated_at }}
+          提交哈希：${{ github.sha }}
+        edit-mode: replace
