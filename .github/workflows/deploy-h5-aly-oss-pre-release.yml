@@ -1,0 +1,96 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, and build the source code
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: Deploy pre-release h5 to Alibaba Cloud OSS
+
+on:
+  pull_request:
+    branches: [ "develop" ]
+
+# 指定工作流所需的权限
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: aly-deploy-pre-release
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install pnpm
+      uses: pnpm/action-setup@v2
+      with:
+        version: latest
+        run_install: false
+
+    - name: Use Node.js 20.x
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20.x
+
+    # 构建项目（因为工作流间无法共享artifacts，所以需要重新构建）
+    - name: Install dependencies
+      run: pnpm install --frozen-lockfile
+    
+    - name: Build project
+      env:
+        NODE_ENV: development
+        TARO_APP_BUILD_ENV: development
+        TARO_APP_AI_API_KEY: ${{ secrets.TARO_APP_AI_API_KEY }}
+        TARO_APP_AI_API_BASE_URL: ${{ vars.TARO_APP_AI_API_BASE_URL }}
+        TARO_APP_API_BASE_URL: ${{ vars.TARO_APP_API_BASE_URL }}
+      run: pnpm run build:h5
+    
+    # 安装 tsx 运行时依赖
+    - name: Install tsx
+      run: pnpm install tsx @types/node ali-oss @types/ali-oss
+
+    # 上传到阿里云 OSS
+    - name: Upload to aly OSS
+      id: upload-oss
+      env:
+        ALIBABA_CLOUD_ACCESS_KEY_ID: ${{ secrets.ALIBABA_CLOUD_ACCESS_KEY_ID }}
+        ALIBABA_CLOUD_ACCESS_KEY_SECRET: ${{ secrets.ALIBABA_CLOUD_ACCESS_KEY_SECRET }}
+        PAGE_OSS_BUCKET: ${{ vars.PAGE_OSS_BUCKET }}
+        PAGE_OSS_REGION: ${{ vars.PAGE_OSS_REGION }}
+        PAGE_OSS_PATH: ${{ vars.PAGE_OSS_PATH }}
+      run: |
+        npx tsx upload.ts
+        # 设置预览URL作为输出变量
+        echo "PREVIEW_URL=${{ vars.PREVIEW_URL }}"
+        
+    # 在PR中查找并更新或创建评论
+    - name: Find Comment
+      uses: peter-evans/find-comment@v2
+      id: find-comment
+      with:
+        issue-number: ${{ github.event.pull_request.number }}
+        comment-author: 'github-actions[bot]'
+        body-includes: "预览环境部署已完成"
+    
+    # 获取中国时间
+    - name: Get China Time
+      id: china-time
+      run: |
+        # 使用TZ环境变量设置时区为中国时区
+        TZ='Asia/Shanghai' echo "CHINA_TIME=$(date '+%Y-%m-%d %H:%M:%S %z')" >> $GITHUB_OUTPUT
+    
+    # 创建或更新PR评论
+    - name: Create or Update Comment
+      uses: peter-evans/create-or-update-comment@v3
+      with:
+        comment-id: ${{ steps.find-comment.outputs.comment-id }}
+        issue-number: ${{ github.event.pull_request.number }}
+        body: |
+          ### 预览环境部署已完成 🚀
+          
+          您可以在以下地址预览这个 PR 的最新变更：
+          
+          🔗 [点击访问预览网站](${{ vars.PREVIEW_URL }})
+          
+          部署时间：${{ steps.china-time.outputs.CHINA_TIME }}
+          提交哈希：${{ github.sha }}
+        edit-mode: replace

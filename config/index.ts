@@ -117,10 +117,10 @@ export default defineConfig<"webpack5">(async (merge, { command, mode }) => {
         );
         chain.resolve.plugin("tsconfig-paths").use(TsconfigPathsPlugin);
         
-        // 添加STL文件支持
+        // 添加bin、fbx、glb、gltf、stl格式支持
         chain.module
-          .rule("stl")
-          .test(/\.stl$/)
+          .rule("3d-models")
+          .test(/\.(bin|fbx|glb|gltf|stl)$/)
           .use("file-loader")
           .loader(require.resolve("file-loader"))
           .options({
@@ -174,10 +174,10 @@ export default defineConfig<"webpack5">(async (merge, { command, mode }) => {
         );
         chain.resolve.plugin("tsconfig-paths").use(TsconfigPathsPlugin);
         
-        // 添加STL文件支持
+        // 添加bin、fbx、glb、gltf、stl格式支持
         chain.module
-          .rule("stl")
-          .test(/\.stl$/)
+          .rule("3d-models")
+          .test(/\.(bin|fbx|glb|gltf|stl)$/)
           .use("file-loader")
           .loader(require.resolve("file-loader"))
           .options({

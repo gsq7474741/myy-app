@@ -7,6 +7,9 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    BookingForm: typeof import('./../src/components/booking/form.vue')['default']
+    BookingMaintenanceInfo: typeof import('./../src/components/booking/maintenance-info.vue')['default']
+    BookingNoDeviceTip: typeof import('./../src/components/booking/no-device-tip.vue')['default']
     CardCard: typeof import('./../src/components/card/card.vue')['default']
     CardEmpty: typeof import('./../src/components/card/empty.vue')['default']
     CardList: typeof import('./../src/components/card/list.vue')['default']
@@ -17,10 +20,12 @@ declare module 'vue' {
     CommonPage: typeof import('./../src/components/common/page.vue')['default']
     CommonProgress: typeof import('./../src/components/common/progress.vue')['default']
     CommonSwitch: typeof import('./../src/components/common/switch.vue')['default']
+    DebugDebugPanel: typeof import('./../src/components/debug/debug-panel.vue')['default']
     GardenChatBtn: typeof import('./../src/components/garden/chat-btn.vue')['default']
     GardenEntries: typeof import('./../src/components/garden/entries.vue')['default']
     GardenFloatStatus: typeof import('./../src/components/garden/float-status.vue')['default']
     GardenInfoCard: typeof import('./../src/components/garden/info-card.vue')['default']
+    GardenLightDebugPanel: typeof import('./../src/components/garden/light-debug-panel.vue')['default']
     GardenTreeModel: typeof import('./../src/components/garden/tree-model.vue')['default']
     Layout: typeof import('./../src/components/layout/index.vue')['default']
     LayoutNavbar: typeof import('./../src/components/layout/navbar.vue')['default']
