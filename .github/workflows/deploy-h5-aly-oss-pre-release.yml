@@ -37,7 +37,7 @@ jobs:
     
     - name: Build project
       env:
-        NODE_ENV: production
+        NODE_ENV: development
         TARO_APP_AI_API_KEY: ${{ secrets.TARO_APP_AI_API_KEY }}
         TARO_APP_AI_API_BASE_URL: ${{ vars.TARO_APP_AI_API_BASE_URL }}
         TARO_APP_API_BASE_URL: ${{ vars.TARO_APP_API_BASE_URL }}

@@ -6,10 +6,11 @@ import WaterClose from "@/assets/images/water-close.png";
 import { storeToRefs } from "pinia";
 import { formatPH } from "../../utils/format";
 import { ref, computed } from "vue";
+import { debugConfig } from "../../config/debug";
 
 // 是否处于调试模式
-const isDebugModeSeasonBg = ref(true);
-const isDebugModeTreeModel = ref(true);
+const isDebugModeSeasonBg = ref(debugConfig.seasonBgDebug);
+const isDebugModeTreeModel = ref(debugConfig.treeModelDebug);
 
 const appStore = useAppStore();
 const courtyardStore = useCourtyardStore();
