@@ -7,6 +7,9 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    BookingForm: typeof import('./../src/components/booking/form.vue')['default']
+    BookingMaintenanceInfo: typeof import('./../src/components/booking/maintenance-info.vue')['default']
+    BookingNoDeviceTip: typeof import('./../src/components/booking/no-device-tip.vue')['default']
     CardCard: typeof import('./../src/components/card/card.vue')['default']
     CardEmpty: typeof import('./../src/components/card/empty.vue')['default']
     CardList: typeof import('./../src/components/card/list.vue')['default']

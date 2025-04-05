@@ -18,12 +18,13 @@ const isWatering = computed({
   get: () => {
     return (currentDevice?.value?.WaterOutletSwitch ?? 0) === 1;
   },
-  set: (v) => {
+  set: (_) => {
     Taro.showToast({ title: "Demo账号不支持水泵控制", icon: "error" });
   },
 });
 const onClickBooking = () => {
-  Taro.showToast({ title: "Demo账号不支持预约", icon: "error" });
+  // 跳转到预约养护页面
+  Taro.navigateTo({ url: "/pages/courtyard/booking" });
 };
 const goToChat = () => {
   if (appStore.isLogin) {

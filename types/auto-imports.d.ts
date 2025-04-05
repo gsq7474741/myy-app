@@ -71,6 +71,7 @@ declare global {
   const useBackground: typeof import('taro-hooks')['useBackground']
   const useBattery: typeof import('taro-hooks')['useBattery']
   const useBluetooth: typeof import('taro-hooks')['useBluetooth']
+  const useBookingStore: typeof import('../src/stores/booking')['useBookingStore']
   const useBoolean: typeof import('taro-hooks')['useBoolean']
   const useBrightness: typeof import('taro-hooks')['useBrightness']
   const useCamera: typeof import('taro-hooks')['useCamera']
@@ -229,6 +230,7 @@ declare module 'vue' {
     readonly useBackground: UnwrapRef<typeof import('taro-hooks')['useBackground']>
     readonly useBattery: UnwrapRef<typeof import('taro-hooks')['useBattery']>
     readonly useBluetooth: UnwrapRef<typeof import('taro-hooks')['useBluetooth']>
+    readonly useBookingStore: UnwrapRef<typeof import('../src/stores/booking')['useBookingStore']>
     readonly useBoolean: UnwrapRef<typeof import('taro-hooks')['useBoolean']>
     readonly useBrightness: UnwrapRef<typeof import('taro-hooks')['useBrightness']>
     readonly useCamera: UnwrapRef<typeof import('taro-hooks')['useCamera']>

@@ -3,6 +3,7 @@ export default {
     "pages/index/index",
     "pages/chat/index",
     "pages/courtyard/index-v2",
+    "pages/courtyard/booking",
     "pages/courtyard/maintenance",
     "pages/courtyard/camera",
     "pages/me/index",
