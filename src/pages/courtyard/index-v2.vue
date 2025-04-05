@@ -6,11 +6,12 @@ import WaterClose from "@/assets/images/water-close.png";
 import { storeToRefs } from "pinia";
 import { formatPH } from "../../utils/format";
 import { ref, computed } from "vue";
-import { debugConfig } from "../../config/debug";
+import { debugConfig, isDebugEnabled } from "../../config/debug";
+import DebugPanel from "../../components/debug/debug-panel.vue";
 
 // 是否处于调试模式
-const isDebugModeSeasonBg = ref(debugConfig.seasonBgDebug);
-const isDebugModeTreeModel = ref(debugConfig.treeModelDebug);
+const isDebugModeSeasonBg = debugConfig.seasonBgDebug;
+const isDebugModeTreeModel = debugConfig.treeModelDebug;
 
 const appStore = useAppStore();
 const courtyardStore = useCourtyardStore();
@@ -347,6 +348,9 @@ const seasonBgClass = computed(() => {
       </view>
     </view>
   </view>
+  
+  <!-- 调试面板 -->
+  <DebugPanel v-if="isDebugEnabled" />
 </template>
 
 <style lang="less">

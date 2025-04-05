@@ -20,6 +20,7 @@ declare module 'vue' {
     CommonPage: typeof import('./../src/components/common/page.vue')['default']
     CommonProgress: typeof import('./../src/components/common/progress.vue')['default']
     CommonSwitch: typeof import('./../src/components/common/switch.vue')['default']
+    DebugDebugPanel: typeof import('./../src/components/debug/debug-panel.vue')['default']
     GardenChatBtn: typeof import('./../src/components/garden/chat-btn.vue')['default']
     GardenEntries: typeof import('./../src/components/garden/entries.vue')['default']
     GardenFloatStatus: typeof import('./../src/components/garden/float-status.vue')['default']
