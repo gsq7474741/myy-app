@@ -5,8 +5,8 @@
 import { ref } from 'vue';
 
 // 检查当前环境
-const isProduction = process.env.NODE_ENV === 'production';
-const isDevelopment = process.env.NODE_ENV === 'development';
+const isProduction = process.env.TARO_APP_BUILD_ENV === 'production';
+const isDevelopment = process.env.TARO_APP_BUILD_ENV === 'development';
 
 // 默认配置
 const defaultConfig = {
