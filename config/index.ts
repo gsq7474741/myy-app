@@ -70,7 +70,11 @@ export default defineConfig<"webpack5">(async (merge, { command, mode }) => {
         } satisfies AutoImportOptions,
       ],
     ],
-    defineConstants: {},
+    defineConstants: {
+      // 定义环境变量，这些变量会在编译时被替换
+      'process.env.TARO_APP_BUILD_ENV': JSON.stringify(process.env.TARO_APP_BUILD_ENV),
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+    },
     copy: {
       patterns: [],
       options: {},
