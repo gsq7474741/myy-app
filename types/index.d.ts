@@ -10,25 +10,38 @@ type CardListItem = {
 
 type OrderListItem = {
   id: number;
-  pid: number;
-  status: OrderStatus;
-  type: string;
-  createTime: number;
-  updateTime: number;
+  user_id: number;
+  dev_id: number;
+  maintenance_categories: number;
+  create_time: string;
+  completion_time: string | null;
+  is_completion: number;
+  user_images: string[] | null;
+  consultation_description: string | null;
+  model_advice: string | null;
+  manual_advice: string | null;
+  status?: OrderStatus; // 前端计算属性
+  type?: string; // 前端计算属性
 };
 
-type OrderStatus = "pending" | "completed" | "cancelled" | "inprogress";
+type OrderStatus = "pending" | "completed" | "inprogress";
+
+type MaintenanceCategory = 0 | 1 | 2; // 0:问诊 1:工单 2:浇水
 
 type OrderDetail = {
   id: number;
-  pid: number;
-  status: OrderStatus;
-  type: string;
-  createTime: number;
-  updateTime: number;
-  name: string;
-  phone: string;
-  remark: string;
+  user_id: number;
+  dev_id: number;
+  maintenance_categories: number;
+  create_time: string;
+  completion_time: string | null;
+  is_completion: number;
+  user_images: string[] | null;
+  consultation_description: string | null;
+  model_advice: string | null;
+  manual_advice: string | null;
+  status?: OrderStatus; // 前端计算属性
+  type?: string; // 前端计算属性
 };
 
 type TreeListItem = {

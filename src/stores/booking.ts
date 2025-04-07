@@ -161,7 +161,8 @@ export const useBookingStore = defineStore("booking", () => {
         },
         data: {
           user_id: String(appStore.userId),
-          dev_id: formData.deviceId
+          dev_id: formData.deviceId,
+          maintenance_categories: 1
         }
       });
       

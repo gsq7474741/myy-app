@@ -23,28 +23,31 @@
         <OrderList :data="item.list"></OrderList>
       </AtTabsPane>
     </AtTabs>
+    <view v-if="isLoading" class="fixed inset-0 flex items-center justify-center bg-white/80 z-50">
+      <AtActivityIndicator :size="32" mode="center"></AtActivityIndicator>
+    </view>
   </view>
 </template>
 
 <script setup lang="ts">
-import { AtTabs, AtTabsPane } from "taro-ui-vue3";
+import { AtTabs, AtTabsPane, AtActivityIndicator } from "taro-ui-vue3";
 import Taro from "@tarojs/taro";
 
 const orderStore = useOrderStore();
 const currentTab = ref(0);
+const isLoading = ref(false);
 
+// 所有订单列表
 const orderListAll = computed(() => orderStore.orderList);
-const orderListPending = computed(() =>
-  orderStore.orderList.filter((order) => order.status === "pending")
-);
+
+// 进行中的订单列表
 const orderListInProgress = computed(() =>
   orderStore.orderList.filter((order) => order.status === "inprogress")
 );
+
+// 已完成的订单列表
 const orderListCompleted = computed(() =>
   orderStore.orderList.filter((order) => order.status === "completed")
-);
-const orderListCancelled = computed(() =>
-  orderStore.orderList.filter((order) => order.status === "cancelled")
 );
 
 type TabList = {
@@ -52,21 +55,45 @@ type TabList = {
   status: OrderStatus | "all";
   list: MaybeRefOrGetter<OrderListItem[]>;
 }[];
+
+// 定义标签页列表
 const tabList = ref([
   { title: "全部订单", status: "all", list: orderListAll },
   { title: "进行中", status: "inprogress", list: orderListInProgress },
-  { title: "待处理", status: "pending", list: orderListPending },
   { title: "已完成", status: "completed", list: orderListCompleted },
-  { title: "已取消", status: "cancelled", list: orderListCancelled },
 ] satisfies TabList);
 
+// 处理标签页点击
 const handleClick = (index: number) => {
   currentTab.value = index;
 };
 
+// 返回我的页面
 const backToHome = () => {
   Taro.navigateTo({ url: "/pages/me/index" });
 };
+
+// 刷新订单列表
+const refreshOrderList = async () => {
+  isLoading.value = true;
+  try {
+    await orderStore.fetchOrderList();
+  } catch (error) {
+    console.error("刷新订单列表失败:", error);
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+// 页面加载时获取订单列表
+onMounted(() => {
+  refreshOrderList();
+});
+
+// 使用 Taro 的页面生命周期钩子
+Taro.useDidShow(() => {
+  refreshOrderList();
+});
 </script>
 
 <style lang="less">
