@@ -7,6 +7,7 @@ import MaintenanceInfo from '../../components/booking/maintenance-info.vue';
 import NoDeviceTip from '../../components/booking/no-device-tip.vue';
 
 // 获取store
+const appStore = useAppStore();
 const bookingStore = useBookingStore();
 
 // 提交表单
@@ -22,6 +23,7 @@ const submitForm = async () => {
 
 // 页面加载时初始化数据
 onMounted(() => {
+  appStore.goToLogin();
   bookingStore.initForm();
 });
 </script>
