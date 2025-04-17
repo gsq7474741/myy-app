@@ -15,7 +15,7 @@ const isDebugModeTreeModel = debugConfig.treeModelDebug;
 
 const appStore = useAppStore();
 const courtyardStore = useCourtyardStore();
-const { currentDevice } = storeToRefs(courtyardStore);
+const { currentDevice, weatherInfo, isLoadingWeather } = storeToRefs(courtyardStore);
 const isWatering = computed({
   get: () => {
     return (currentDevice?.value?.WaterOutletSwitch ?? 0) === 1;
@@ -151,12 +151,12 @@ const seasonBgClass = computed(() => {
               >
               <view class="text-blue">
                 <text class="text-xl">{{
-                  currentDevice?.RelativeHumidity ?? 60
+                  currentDevice?.RelativeHumidity ?? '未知'
                 }}</text
                 ><text class="text-xs text-[10px]">%</text>
                 <CommonProgress
                   class="mt-2"
-                  :value="currentDevice?.RelativeHumidity ?? 60"
+                  :value="currentDevice?.RelativeHumidity ?? 0"
                   color="#007AFF"
                   bg-color="#007AFF40"
                 ></CommonProgress>
@@ -168,7 +168,7 @@ const seasonBgClass = computed(() => {
               >
               <view class="text-blue">
                 <text class="text-xl">{{
-                  currentDevice?.CurrentTemperature ?? 23
+                  currentDevice?.CurrentTemperature ?? '未知'
                 }}</text
                 ><text class="text-xs text-[10px]">℃</text>
               </view>
@@ -186,10 +186,8 @@ const seasonBgClass = computed(() => {
                 >环境光照</text
               >
               <view class="text-green">
-                <text class="text-xl">6</text
-                ><text class="text-xs text-[10px]">H</text
-                ><text class="text-xl">12</text
-                ><text class="text-xs text-[10px]">M</text>
+                <text class="text-xl">{{ currentDevice?.LightLux ?? '未知' }}</text
+                ><text class="text-xs text-[10px]">lux</text>
                 <view class="h-[1px] bg-[#4BAF4F40] w-full mt-1.5"></view>
               </view>
             </view>
@@ -197,8 +195,16 @@ const seasonBgClass = computed(() => {
               <text class="text-sm font-bold text-black/89 block mb-2"
                 >环境天气</text
               >
-              <view class="text-green">
-                <text class="text-xl">多云转晴</text>
+              <view class="flex flex-col gap-1">
+                <view v-if="isLoadingWeather && !weatherInfo" class="text-green flex items-center">
+                  <text class="text-base">正在获取天气信息...</text>
+                  <view class="loading-dot ml-1"></view>
+                </view>
+                <view v-else>
+                  <view class="text-green">
+                    <text class="text-xl">{{ weatherInfo?.condition ?? '未知' }}</text>
+                  </view>
+                </view>
               </view>
             </view>
           </view>
@@ -212,12 +218,12 @@ const seasonBgClass = computed(() => {
                 >
                 <view class="text-brown">
                   <text class="text-xl">{{
-                    currentDevice?.SoilHumidity ?? 60
+                    currentDevice?.SoilHumidity ?? '未知'
                   }}</text
                   ><text class="text-xs text-[10px]">%</text>
                   <CommonProgress
                     class="mt-2"
-                    :value="currentDevice?.SoilHumidity ?? 60"
+                    :value="currentDevice?.SoilHumidity ?? 0"
                     color="#A2845E"
                     bg-color="#A2845E33"
                   ></CommonProgress>
@@ -229,7 +235,7 @@ const seasonBgClass = computed(() => {
                 >
                 <view class="text-brown">
                   <text class="text-xl">{{
-                    currentDevice?.SoilTemperature ?? 23
+                    currentDevice?.SoilTemperature ?? '未知'
                   }}</text
                   ><text class="text-xs text-[10px]">℃</text>
                 </view>
@@ -242,10 +248,10 @@ const seasonBgClass = computed(() => {
                 >
                 <view class="text-brown">
                   <text class="text-xl">{{
-                    formatPH(currentDevice?.SoilPH ?? 7)
+                    currentDevice?.SoilPH ? formatPH(currentDevice.SoilPH) : '未知'
                   }}</text
                   ><text class="text-xs text-[10px]"
-                    >({{ currentDevice?.SoilPH ?? 7 }})</text
+                    >({{ currentDevice?.SoilPH ?? '未知' }})</text
                   >
                   <view class="h-[1px] bg-brown/40 w-full mt-1.5"></view>
                 </view>
@@ -255,7 +261,7 @@ const seasonBgClass = computed(() => {
                   >土壤导电率</text
                 >
                 <view class="text-brown">
-                  <text class="text-xl">{{ currentDevice?.SoilEC ?? 60 }}</text
+                  <text class="text-xl">{{ currentDevice?.SoilEC ?? '未知' }}</text
                   ><text class="text-xs text-[10px]">μs/cm℃</text>
                 </view>
               </view>
@@ -273,7 +279,7 @@ const seasonBgClass = computed(() => {
                   <view class="flex items-center justify-between">
                     <view
                       ><text class="text-xl">{{
-                        currentDevice?.SoilN ?? 20.6
+                        currentDevice?.SoilN ?? '未知'
                       }}</text
                       ><text class="text-xs text-[10px]">%</text></view
                     >
@@ -298,7 +304,7 @@ const seasonBgClass = computed(() => {
                   <view class="flex items-center justify-between">
                     <view
                       ><text class="text-xl">{{
-                        currentDevice?.SoilK ?? 20.6
+                        currentDevice?.SoilK ?? '未知'
                       }}</text
                       ><text class="text-xs text-[10px]">%</text></view
                     >
@@ -325,7 +331,7 @@ const seasonBgClass = computed(() => {
                   <view class="flex items-center justify-between">
                     <view
                       ><text class="text-xl">{{
-                        currentDevice?.SoilP ?? 20.6
+                        currentDevice?.SoilP ?? '未知'
                       }}</text
                       ><text class="text-xs text-[10px]">%</text></view
                     >
@@ -573,6 +579,27 @@ page {
 @keyframes snowfall {
   from { background-position: 0 0; }
   to { background-position: 200px 400px; }
+}
+
+/* 加载动画 */
+.loading-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #4BAF4F;
+  border-radius: 50%;
+  display: inline-block;
+  animation: loading-dot-pulse 1.4s infinite ease-in-out;
+}
+
+@keyframes loading-dot-pulse {
+  0%, 100% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
 }
 
 .card-1 {
