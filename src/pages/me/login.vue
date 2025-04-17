@@ -66,7 +66,7 @@ import Taro from "@tarojs/taro";
 
 const appStore = useAppStore();
 
-const username = ref("ceshi");
+const username = ref("ceshi1");
 const password = ref("123456");
 const loading = ref(false);
 

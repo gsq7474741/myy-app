@@ -2,7 +2,7 @@
   "miniprogramRoot": "dist/",
   "projectname": "myy",
   "description": "",
-  "appid": "wx853bb662a9bbf9d3",
+  "appid": "wx21165742428e299a",
   "setting": {
     "urlCheck": true,
     "es6": true,
@@ -18,7 +18,7 @@
   },
   "compileType": "miniprogram",
   "libVersion": "3.5.7",
-  "srcMiniprogramRoot": "dist/",
+  "srcMiniprogramRoot": "dist-weapp/",
   "packOptions": {
     "ignore": [],
     "include": []
