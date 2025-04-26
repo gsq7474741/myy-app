@@ -99,10 +99,40 @@ export const useCourtyardStore = defineStore("courtyard", () => {
     });
   };
 
+  // 获取健康状态
+  const healthStatus = ref<string>('');
+  const isLoadingHealth = ref(false);
+  const getHealth = () => {
+    if (!appStore.isLogin) {
+      return;
+    }
+    isLoadingHealth.value = true;
+    Taro.request({
+      url: getApiUrl("users/get-mydev-health"),
+      method: "GET",
+      header: { Authorization: `${appStore.userToken}` },
+      data: { device_id: currentDevice.value?.id },
+      success: (res) => {
+        if (res.data.code === 0) {
+          healthStatus.value = res.data.data.status;
+        } else {
+          console.error("获取健康状态失败", res.data.message);
+        }
+      },
+      fail: (err) => {
+        console.error("获取健康状态请求失败", err);
+      },
+      complete: () => {
+        isLoadingHealth.value = false;
+      }
+    });
+  };
+
   // 初始化数据
   const initData = () => {
     getDevices();
     getWeather();
+    getHealth();
   };
 
   // 定时刷新数据
@@ -114,6 +144,11 @@ export const useCourtyardStore = defineStore("courtyard", () => {
   setInterval(() => {
     getWeather();
   }, 10000);
+
+  // 健康状态每5秒更新一次
+  setInterval(() => {
+    getHealth();
+  }, 5000);
 
   // 初始化数据
   initData();
@@ -127,5 +162,7 @@ export const useCourtyardStore = defineStore("courtyard", () => {
     weatherInfo,
     isLoadingWeather,
     getWeather,
+    healthStatus,
+    getHealth,
   };
 });
