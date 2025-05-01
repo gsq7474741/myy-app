@@ -38,7 +38,11 @@ export const useCourtyardStore = defineStore("courtyard", () => {
     },
   ]);
   const devicesList = ref<DeviceInfo[]>([]);
-  const currentDevice = computed(() => devicesList.value?.[0]);
+  const currentDeviceIndex = ref(0);
+  const currentDevice = computed(() => {
+    if (devicesList.value.length === 0) return undefined;
+    return devicesList.value[currentDeviceIndex.value] || devicesList.value[0];
+  });
   
   // 天气信息
   const weatherInfo = ref<WeatherInfo | null>(null);
@@ -153,6 +157,52 @@ export const useCourtyardStore = defineStore("courtyard", () => {
   // 初始化数据
   initData();
 
+  // 切换当前设备
+  function setCurrentDeviceByIndex(idx: number) {
+    if (devicesList.value.length === 0) return;
+    if (idx < 0 || idx >= devicesList.value.length) return;
+    currentDeviceIndex.value = idx;
+  }
+
+  // 控制水泵开关
+  const controlWaterSwitch = (switchOn: boolean): Promise<any> => {
+    console.log("controlWaterSwitch: Not logged in or no device selected", {
+      isLogin: appStore.isLogin,
+      currentDeviceId: currentDevice.value?.id,
+      userId: appStore.userInfo?.id
+    });
+    return new Promise((resolve, reject) => {
+      if (!appStore.isLogin || !currentDevice.value?.id || !appStore.userInfo?.id) {
+        Taro.showToast({ title: '请先登录并选择设备', icon: 'none' });
+        reject('未登录或无设备');
+        return;
+      }
+      Taro.request({
+        url: getApiUrl(`user/${appStore.userInfo.id}/my-dev-water-switch`),
+        method: 'POST',
+        header: { Authorization: `${appStore.userToken}` },
+        data: {
+          deviceId: currentDevice.value.id,
+          switch: switchOn ? 1 : 0,
+        },
+        success: (res) => {
+          if (res.data.code === 200 || res.data.code === 0) {
+            Taro.showToast({ title: '操作成功', icon: 'success' });
+            getDevices();
+            resolve(res.data);
+          } else {
+            Taro.showToast({ title: res.data.message || '操作失败', icon: 'none' });
+            reject(res.data.message);
+          }
+        },
+        fail: (err) => {
+          Taro.showToast({ title: '网络错误', icon: 'none' });
+          reject(err);
+        },
+      });
+    });
+  };
+
   return {
     treeList,
     getTree,
@@ -164,5 +214,8 @@ export const useCourtyardStore = defineStore("courtyard", () => {
     getWeather,
     healthStatus,
     getHealth,
+    controlWaterSwitch,
+    setCurrentDeviceByIndex,
+    currentDeviceIndex,
   };
 });

@@ -16,6 +16,8 @@ export const useAppStore = defineStore("app", () => {
   if (route.params.quick) {
     userId.value = route.params.id;
     userToken.value = route.params.token;
+    // 这里假设 quick 模式下 username 不可得，用 id 填充
+    userInfo.value = { id: route.params.id, username: '' };
     if (userToken.value && userId.value) {
       isLogin.value = true;
       Taro.navigateTo({ url: "/pages/me/index" });
@@ -34,6 +36,9 @@ export const useAppStore = defineStore("app", () => {
           if (res.data.code === 0) {
             userToken.value = res.data.data;
             isLogin.value = true;
+            // 假设登录接口只返回 token，需要额外请求用户信息接口
+            // 这里简单处理：用本地 userId 拼装 userInfo
+            userInfo.value = { id: userId.value, username: '' };
             useCourtyardStore().getDevices();
             resolve(res.data);
           } else {

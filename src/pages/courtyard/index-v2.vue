@@ -8,6 +8,7 @@ import { formatPH } from "../../utils/format";
 import { ref, computed } from "vue";
 import { debugConfig, isDebugEnabled } from "../../config/debug";
 import DebugPanel from "../../components/debug/debug-panel.vue";
+import DeviceSelector from "@/components/garden/device-selector.vue";
 
 // 是否处于调试模式
 const isDebugModeSeasonBg = debugConfig.seasonBgDebug;
@@ -20,8 +21,14 @@ const isWatering = computed({
   get: () => {
     return (currentDevice?.value?.WaterOutletSwitch ?? 0) === 1;
   },
-  set: (_) => {
-    Taro.showToast({ title: "Demo账号不支持水泵控制", icon: "error" });
+  set: (val: boolean) => {
+    courtyardStore.controlWaterSwitch(val).catch(() => {
+      // 失败时回滚 UI 状态（force update）
+      setTimeout(() => {
+        // 触发视图刷新
+        courtyardStore.getDevices();
+      }, 300);
+    });
   },
 });
 const onClickBooking = () => {
