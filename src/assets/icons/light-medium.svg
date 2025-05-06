@@ -1,0 +1,22 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="orangeGradient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFF59D"/>
+      <stop offset="100%" stop-color="#FFA726"/>
+    </radialGradient>
+  </defs>
+  <circle cx="32" cy="32" r="20" fill="url(#orangeGradient)"/>
+  <!-- 光芒 -->
+  <g stroke="#FFB300" stroke-width="2">
+    <line x1="32" y1="6" x2="32" y2="0"/>
+    <line x1="32" y1="58" x2="32" y2="64"/>
+    <line x1="58" y1="32" x2="64" y2="32"/>
+    <line x1="6" y1="32" x2="0" y2="32"/>
+    <line x1="50.91" y1="13.09" x2="55.43" y2="8.57"/>
+    <line x1="13.09" y1="50.91" x2="8.57" y2="55.43"/>
+    <line x1="50.91" y1="50.91" x2="55.43" y2="55.43"/>
+    <line x1="13.09" y1="13.09" x2="8.57" y2="8.57"/>
+  </g>
+  <!-- 文字 -->
+  <text x="32" y="40" text-anchor="middle" font-size="20" font-family="Arial, sans-serif" fill="#fff" font-weight="bold">中</text>
+</svg>

@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import Taro from "@tarojs/taro";
-import Light1Img from "@/assets/images/light-1.png";
+import LightStrong from "@/assets/icons/light-strong.svg";
+import LightMedium from "@/assets/icons/light-medium.svg";
+import LightWeak from "@/assets/icons/light-weak.svg";
 import WaterOpen from "@/assets/images/water-open.png";
 import WaterClose from "@/assets/images/water-close.png";
 import { storeToRefs } from "pinia";
@@ -17,6 +19,15 @@ const isDebugModeTreeModel = debugConfig.treeModelDebug;
 const appStore = useAppStore();
 const courtyardStore = useCourtyardStore();
 const { currentDevice, weatherInfo, isLoadingWeather } = storeToRefs(courtyardStore);
+
+// 光强分级：强（>20000）、中（5000-20000）、弱（<5000）
+const lightLevel = computed(() => {
+  const lux = currentDevice?.value?.LightLux;
+  if (typeof lux !== 'number') return 'weak';
+  if (lux > 20000) return 'strong';
+  if (lux >= 5000) return 'medium';
+  return 'weak';
+});
 const isWatering = computed({
   get: () => {
     return (currentDevice?.value?.WaterOutletSwitch ?? 0) === 1;
@@ -88,120 +99,89 @@ const seasonBgClass = computed(() => {
   <view class="main-content size-full">
     <!-- 季节背景层，覆盖标题栏 -->
     <view :class="['seasonal-background-full', seasonBgClass]"></view>
-    
-    <CommonNavbar
-      :show-back="false"
-      class="z-10 relative"
-    ></CommonNavbar>
+
+    <CommonNavbar :show-back="false" class="z-10 relative"></CommonNavbar>
     <view class="relative px-2 size-full flex flex-col items-center gap-4 pt-[56px]">
       <!-- 树模型区域的季节背景层不再需要 -->
       <!-- <view :class="['seasonal-background', seasonBgClass]"></view> -->
-      
+
       <!-- 季节调试按钮，只在调试模式下显示 -->
       <view v-if="isDebugModeSeasonBg" class="season-debug-toggle" @click="toggleSeasonDebug">
         <view class="season-debug-icon">🌍</view>
       </view>
-      
+
       <!-- 季节切换面板，只在调试模式下显示 -->
       <view v-if="isDebugModeSeasonBg && showSeasonDebug" class="season-debug-panel">
         <view class="season-debug-title">季节切换</view>
         <view class="season-debug-buttons">
-          <view 
-            v-for="season in seasons" 
-            :key="season"
-            :class="['season-button', currentSeason === season ? 'active' : '']"
-            @click="changeSeason(season)"
-          >
+          <view v-for="season in seasons" :key="season"
+            :class="['season-button', currentSeason === season ? 'active' : '']" @click="changeSeason(season)">
             {{ seasonNames[season] }}
           </view>
         </view>
       </view>
-      
+
       <GardenFloatStatus class="absolute top-3 left-4"></GardenFloatStatus>
       <view></view>
-      <GardenChatBtn
-        class="absolute top-3 right-4"
-        @click="goToChat"
-      ></GardenChatBtn>
+      <GardenChatBtn class="absolute top-3 right-4" @click="goToChat"></GardenChatBtn>
       <view class="mt-[30px] relative">
         <GardenTreeModel :debug="isDebugModeTreeModel"></GardenTreeModel>
       </view>
       <view class="bg-white/72 rounded-2xl px-2 py-1.75 w-full">
         <view class="w-full flex justify-between items-center mb-6 pt-1.5">
           <view>
-            <button
-              class="m-0 bg-green text-white text-base w-25 h-11.25 flex items-center justify-center rounded-xl"
-              @click="onClickBooking"
-            >
+            <button class="m-0 bg-green text-white text-base w-25 h-11.25 flex items-center justify-center rounded-xl"
+              @click="onClickBooking">
               预约养护
             </button>
           </view>
-          <view
-            @click="test"
-            class="rounded-xl bg-green w-28 h-11.25 flex items-center justify-center"
-          >
+          <view @click="test" class="rounded-xl bg-green w-28 h-11.25 flex items-center justify-center">
             <text class="text-white pr-1">拍照看诊</text>
             <view class="size-5 i-myy-camera text-white"></view>
           </view>
-          <CommonSwitch
-            v-model="isWatering"
-            :thumb-image="isWatering ? WaterOpen : WaterClose"
-          ></CommonSwitch>
+          <CommonSwitch v-model="isWatering" :thumb-image="isWatering ? WaterOpen : WaterClose"></CommonSwitch>
         </view>
         <view class="grid grid-cols-2 gap-2">
-          <view
-            class="card-1 rounded-2xl h-45 p-4 flex flex-col justify-between gap-5"
-          >
+          <view class="card-1 rounded-2xl h-45 p-4 flex flex-col justify-between gap-5">
             <view>
-              <text class="text-sm font-bold text-black/89 block mb-2"
-                >空气湿度</text
-              >
+              <text class="text-sm font-bold text-black/89 block mb-2">空气湿度</text>
               <view class="text-blue">
                 <text class="text-xl">{{
                   currentDevice?.RelativeHumidity ?? '未知'
-                }}</text
-                ><text class="text-xs text-[10px]">%</text>
-                <CommonProgress
-                  class="mt-2"
-                  :value="currentDevice?.RelativeHumidity ?? 0"
-                  color="#007AFF"
-                  bg-color="#007AFF40"
-                ></CommonProgress>
+                  }}</text><text class="text-xs text-[10px]">%</text>
+                <CommonProgress class="mt-2" :value="currentDevice?.RelativeHumidity ?? 0" color="#007AFF"
+                  bg-color="#007AFF40"></CommonProgress>
               </view>
             </view>
             <view>
-              <text class="text-sm font-bold text-black/89 block mb-2"
-                >空气温度</text
-              >
+              <text class="text-sm font-bold text-black/89 block mb-2">空气温度</text>
               <view class="text-blue">
                 <text class="text-xl">{{
                   currentDevice?.CurrentTemperature ?? '未知'
-                }}</text
-                ><text class="text-xs text-[10px]">℃</text>
+                  }}</text><text class="text-xs text-[10px]">℃</text>
               </view>
             </view>
           </view>
-          <view
-            class="card-2 rounded-2xl h-45 p-4 flex flex-col justify-between gap-5 relative"
-          >
-            <image
-              :src="Light1Img"
-              class="absolute top-3 right-4 size-6.25"
-            ></image>
+          <view class="card-2 rounded-2xl h-45 p-4 flex flex-col justify-between gap-5 relative">
+            <template v-if="lightLevel === 'strong'">
+              <img :src="LightStrong" class="absolute top-3 right-4 size-8" />
+            </template>
+            <template v-else-if="lightLevel === 'medium'">
+              <img :src="LightMedium" class="absolute top-3 right-4 size-8" />
+            </template>
+            <template v-else>
+              <img :src="LightWeak" class="absolute top-3 right-4 size-8" />
+            </template>
             <view>
-              <text class="text-sm font-bold text-black/89 block mb-5.25"
-                >环境光照</text
-              >
+              <text class="text-sm font-bold text-black/89 block mb-5.25">环境光照</text>
               <view class="text-green">
-                <text class="text-xl">{{ currentDevice?.LightLux ?? '未知' }}</text
-                ><text class="text-xs text-[10px]">lux</text>
+                <text class="text-xl">{{ currentDevice?.LightLux ?? '未知' }}</text><text
+                  class="text-xs text-[10px]">lux</text>
                 <view class="h-[1px] bg-[#4BAF4F40] w-full mt-1.5"></view>
               </view>
             </view>
             <view>
-              <text class="text-sm font-bold text-black/89 block mb-2"
-                >环境天气</text
-              >
+              <text class="text-sm font-bold text-black/89 block mb-2">环境天气</text>
               <view class="flex flex-col gap-1">
                 <view v-if="isLoadingWeather && !weatherInfo" class="text-green flex items-center">
                   <text class="text-base">正在获取天气信息...</text>
@@ -215,144 +195,93 @@ const seasonBgClass = computed(() => {
               </view>
             </view>
           </view>
-          <view
-            class="card-3 rounded-2xl h-45 p-4 flex justify-between gap-10 col-span-2"
-          >
+          <view class="card-3 rounded-2xl h-45 p-4 flex justify-between gap-10 col-span-2">
             <view class="flex-1/2 flex flex-col justify-between gap-5 w-full">
               <view>
-                <text class="text-sm font-bold text-black/89 block mb-2"
-                  >土壤水分</text
-                >
+                <text class="text-sm font-bold text-black/89 block mb-2">土壤水分</text>
                 <view class="text-brown">
                   <text class="text-xl">{{
                     currentDevice?.SoilHumidity ?? '未知'
-                  }}</text
-                  ><text class="text-xs text-[10px]">%</text>
-                  <CommonProgress
-                    class="mt-2"
-                    :value="currentDevice?.SoilHumidity ?? 0"
-                    color="#A2845E"
-                    bg-color="#A2845E33"
-                  ></CommonProgress>
+                    }}</text><text class="text-xs text-[10px]">%</text>
+                  <CommonProgress class="mt-2" :value="currentDevice?.SoilHumidity ?? 0" color="#A2845E"
+                    bg-color="#A2845E33"></CommonProgress>
                 </view>
               </view>
               <view>
-                <text class="text-sm font-bold text-black/89 block mb-2"
-                  >土壤温度</text
-                >
+                <text class="text-sm font-bold text-black/89 block mb-2">土壤温度</text>
                 <view class="text-brown">
                   <text class="text-xl">{{
                     currentDevice?.SoilTemperature ?? '未知'
-                  }}</text
-                  ><text class="text-xs text-[10px]">℃</text>
+                    }}</text><text class="text-xs text-[10px]">℃</text>
                 </view>
               </view>
             </view>
             <view class="flex-1/2 flex flex-col justify-between gap-5 w-full">
               <view>
-                <text class="text-sm font-bold text-black/89 block mb-5.25"
-                  >土壤PH值</text
-                >
+                <text class="text-sm font-bold text-black/89 block mb-5.25">土壤PH值</text>
                 <view class="text-brown">
                   <text class="text-xl">{{
                     currentDevice?.SoilPH ? formatPH(currentDevice.SoilPH) : '未知'
-                  }}</text
-                  ><text class="text-xs text-[10px]"
-                    >({{ currentDevice?.SoilPH ?? '未知' }})</text
-                  >
+                    }}</text><text class="text-xs text-[10px]">({{ currentDevice?.SoilPH ?? '未知' }})</text>
                   <view class="h-[1px] bg-brown/40 w-full mt-1.5"></view>
                 </view>
               </view>
               <view>
-                <text class="text-sm font-bold text-black/89 block mb-2"
-                  >土壤导电率</text
-                >
+                <text class="text-sm font-bold text-black/89 block mb-2">土壤导电率</text>
                 <view class="text-brown">
-                  <text class="text-xl">{{ currentDevice?.SoilEC ?? '未知' }}</text
-                  ><text class="text-xs text-[10px]">μs/cm℃</text>
+                  <text class="text-xl">{{ currentDevice?.SoilEC ?? '未知' }}</text><text
+                    class="text-xs text-[10px]">μs/cm℃</text>
                 </view>
               </view>
             </view>
           </view>
-          <view
-            class="card-4 rounded-2xl p-4 flex justify-between gap-10 col-span-2"
-          >
+          <view class="card-4 rounded-2xl p-4 flex justify-between gap-10 col-span-2">
             <view class="flex-1/2 flex flex-col justify-between gap-5 w-full">
               <view>
-                <text class="text-sm font-bold text-black/89 block mb-2"
-                  >氮</text
-                >
+                <text class="text-sm font-bold text-black/89 block mb-2">氮</text>
                 <view class="text-black">
                   <view class="flex items-center justify-between">
-                    <view
-                      ><text class="text-xl">{{
+                    <view><text class="text-xl">{{
                         currentDevice?.SoilN ?? '未知'
-                      }}</text
-                      ><text class="text-xs text-[10px]">%</text></view
-                    >
+                        }}</text><text class="text-xs text-[10px]">%</text></view>
                     <view>
-                      <text class="text-[#82BCEF] text-xs">缺乏</text>
+                      <text class="text-[#82BCEF] text-xs">合适</text>
                     </view>
                   </view>
 
-                  <CommonProgress
-                    class="mt-2"
-                    :value="60"
-                    color="#007AFF"
-                    bg-color="#007AFF40"
-                  ></CommonProgress>
+                  <CommonProgress class="mt-2" :value="60" color="#007AFF" bg-color="#007AFF40"></CommonProgress>
                 </view>
               </view>
               <view>
-                <text class="text-sm font-bold text-black/89 block mb-2"
-                  >钾</text
-                >
+                <text class="text-sm font-bold text-black/89 block mb-2">钾</text>
                 <view class="text-black">
                   <view class="flex items-center justify-between">
-                    <view
-                      ><text class="text-xl">{{
+                    <view><text class="text-xl">{{
                         currentDevice?.SoilK ?? '未知'
-                      }}</text
-                      ><text class="text-xs text-[10px]">%</text></view
-                    >
+                        }}</text><text class="text-xs text-[10px]">%</text></view>
                     <view>
-                      <text class="text-[#82BCEF] text-xs">缺乏</text>
+                      <text class="text-[#82BCEF] text-xs">合适</text>
                     </view>
                   </view>
 
-                  <CommonProgress
-                    class="mt-2"
-                    :value="60"
-                    color="#007AFF"
-                    bg-color="#007AFF40"
-                  ></CommonProgress>
+                  <CommonProgress class="mt-2" :value="60" color="#007AFF" bg-color="#007AFF40"></CommonProgress>
                 </view>
               </view>
             </view>
             <view class="flex-1/2 flex flex-col justify-between gap-5 w-full">
               <view>
-                <text class="text-sm font-bold text-black/89 block mb-2"
-                  >磷</text
-                >
+                <text class="text-sm font-bold text-black/89 block mb-2">磷</text>
                 <view class="text-black">
                   <view class="flex items-center justify-between">
-                    <view
-                      ><text class="text-xl">{{
+                    <view><text class="text-xl">{{
                         currentDevice?.SoilP ?? '未知'
-                      }}</text
-                      ><text class="text-xs text-[10px]">%</text></view
-                    >
+                        }}</text><text class="text-xs text-[10px]">%</text></view>
                     <view>
-                      <text class="text-[#82BCEF] text-xs">缺乏</text>
+                      <text class="text-[#82BCEF] text-xs">合适</text>
                     </view>
                   </view>
 
-                  <CommonProgress
-                    class="mt-2"
-                    :value="60"
-                    color="#007AFF"
-                    bg-color="#007AFF40"
-                  ></CommonProgress>
+                  <CommonProgress class="mt-2" :value="60" color="#007AFF" bg-color="#007AFF40"></CommonProgress>
                 </view>
               </view>
             </view>
@@ -361,7 +290,7 @@ const seasonBgClass = computed(() => {
       </view>
     </view>
   </view>
-  
+
   <!-- 调试面板 -->
   <DebugPanel v-if="isDebugEnabled" />
 </template>

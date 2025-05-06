@@ -19,3 +19,4 @@ types/auto-imports.d.ts
 types/vue-components.d.ts
 
 .env.local
+.env
