@@ -51,7 +51,7 @@ function onDeviceChange(e) {
 // 根据 healthStatus 返回对应 SVG 路径
 const iconSrc = computed(() => {
   const st = healthStatus.value;
-  if (st === "正常") return HealthNormal;
+  if (st === "健康") return HealthNormal;
   if (st === "积水") return HealthWater;
   if (st === "干旱") return HealthDry;
   if (st === "缺光照") return HealthLight;

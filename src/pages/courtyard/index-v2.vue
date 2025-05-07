@@ -248,8 +248,7 @@ const seasonBgClass = computed(() => {
                       <text class="text-[#82BCEF] text-xs">合适</text>
                     </view>
                   </view>
-
-                  <CommonProgress class="mt-2" :value="60" color="#007AFF" bg-color="#007AFF40"></CommonProgress>
+                  <CommonProgress class="mt-2" :value="currentDevice?.SoilN || 0" color="#007AFF" bg-color="#007AFF40"></CommonProgress>
                 </view>
               </view>
               <view>
@@ -263,8 +262,7 @@ const seasonBgClass = computed(() => {
                       <text class="text-[#82BCEF] text-xs">合适</text>
                     </view>
                   </view>
-
-                  <CommonProgress class="mt-2" :value="60" color="#007AFF" bg-color="#007AFF40"></CommonProgress>
+                  <CommonProgress class="mt-2" :value="currentDevice?.SoilK || 0" color="#007AFF" bg-color="#007AFF40"></CommonProgress>
                 </view>
               </view>
             </view>
@@ -280,8 +278,7 @@ const seasonBgClass = computed(() => {
                       <text class="text-[#82BCEF] text-xs">合适</text>
                     </view>
                   </view>
-
-                  <CommonProgress class="mt-2" :value="60" color="#007AFF" bg-color="#007AFF40"></CommonProgress>
+                  <CommonProgress class="mt-2" :value="currentDevice?.SoilP || 0" color="#007AFF" bg-color="#007AFF40"></CommonProgress>
                 </view>
               </view>
             </view>
