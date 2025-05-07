@@ -3,4 +3,4 @@
 3. 代码逻辑、状态管理和后端调用写在stores文件夹中
 4. 页面逻辑写在pages文件夹中
 5. 组件写在components文件夹中，组件名称需要和文件名一致，尽可能模块化抽象并解耦
-6. 必须使用 headless+tailwind 风格
+6. 必须使用 headless+tailwind 风格, 禁止css嵌套，或者用scss
